@@ -2,7 +2,7 @@
 
 Lexer::Lexer(CommonParserUtil<Token> &pu)
 {
-	pu.lex("\\$", [](string text)->Token {return Token::END_OF_TOKEN; });
+	//pu.lexEndToken(Token::END_OF_TOKEN);
 	pu.lex("[ \t\n]", [](string text)->Token {return Token::EMPTY_SPACE; });
 	pu.lex("[0-9]+", [](string text)->Token {return Token::INTEGER_NUMBER; });
 	pu.lex("\\(", [](string text)->Token {return Token::OPEN_PAREN; });

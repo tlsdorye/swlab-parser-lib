@@ -4,6 +4,7 @@
 #include <map> // test¿ë
 #include <vector>
 #include <array>
+#include <regex>
 using namespace std;
 
 template <typename TOKEN>
