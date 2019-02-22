@@ -15,13 +15,16 @@ void printTerminal(Terminal<Token> term)
 
 int main()
 {
-	Token T(Token::END_OF_TOKEN);
-	Terminal<Token> Term("syn-tax", T, 1, 2);
+	//Token T(Token::END_OF_TOKEN);
+	//Terminal<Token> Term("syn-tax", T, 1, 2);
 
-	printToken(T);
-	printTerminal(Term);
+	//printToken(T);
+	//printTerminal(Term);
 
 	CommonParserUtil<Token> pu;
-	Lexer lexer(pu);
-	pu.testTokenBuilder();
+	//Lexer lexer(pu);
+	//pu.testTokenBuilder();
+
+	string filePath = "multiline.txt";
+	pu.lexing(ifstream(filePath));
 }

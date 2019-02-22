@@ -37,6 +37,9 @@
     <Filter Include="헤더 파일\example\arith\ast">
       <UniqueIdentifier>{fb4210e1-c006-44a3-bfd4-dc19ab806341}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\example\arith\test">
+      <UniqueIdentifier>{8959f6a3-8a52-4361-b6b7-4e7d0ef3c3e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -104,5 +107,10 @@
     <ClInclude Include="CommonParserUtil.h">
       <Filter>헤더 파일\parserlib</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="multiline.txt">
+      <Filter>소스 파일\example\arith\test</Filter>
+    </Text>
   </ItemGroup>
 </Project>
