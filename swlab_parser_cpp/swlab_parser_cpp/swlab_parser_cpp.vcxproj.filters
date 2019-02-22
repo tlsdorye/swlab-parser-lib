@@ -13,10 +13,96 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\example">
+      <UniqueIdentifier>{1a750575-1bc4-4cde-a61f-280b931534cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\example">
+      <UniqueIdentifier>{6b4c47a6-5a4d-4480-8568-7d38e5e71b8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\parserlib">
+      <UniqueIdentifier>{78309cfa-7b18-4eaa-822e-8b78db608beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\parserlib">
+      <UniqueIdentifier>{e9fd5e52-7f33-44b7-82a6-f2002066adfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\example\arith">
+      <UniqueIdentifier>{4560df8c-4b10-48b5-9904-331451f021ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\example\arith">
+      <UniqueIdentifier>{7a0c7388-6e5b-42b7-bc42-a0d174498daa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\example\arith\ast">
+      <UniqueIdentifier>{99282cc3-d531-4aa6-9c25-55bf935c8f57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\example\arith\ast">
+      <UniqueIdentifier>{fb4210e1-c006-44a3-bfd4-dc19ab806341}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\example\arith</Filter>
     </ClCompile>
+    <ClCompile Include="Token.cpp">
+      <Filter>소스 파일\parserlib</Filter>
+    </ClCompile>
+    <ClCompile Include="Var.cpp">
+      <Filter>소스 파일\example\arith\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="Lit.cpp">
+      <Filter>소스 파일\example\arith\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="Expr.cpp">
+      <Filter>소스 파일\example\arith\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="BinOp.cpp">
+      <Filter>소스 파일\example\arith\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="Assign.cpp">
+      <Filter>소스 파일\example\arith\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>소스 파일\parserlib</Filter>
+    </ClCompile>
+    <ClCompile Include="Lexer.cpp">
+      <Filter>소스 파일\example\arith</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Main.h">
+      <Filter>헤더 파일\example\arith</Filter>
+    </ClInclude>
+    <ClInclude Include="Token.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
+    <ClInclude Include="Lexer.h">
+      <Filter>헤더 파일\example\arith</Filter>
+    </ClInclude>
+    <ClInclude Include="Var.h">
+      <Filter>헤더 파일\example\arith\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="Lit.h">
+      <Filter>헤더 파일\example\arith\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="Expr.h">
+      <Filter>헤더 파일\example\arith\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="BinOp.h">
+      <Filter>헤더 파일\example\arith\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="Assign.h">
+      <Filter>헤더 파일\example\arith\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="StackElement.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
+    <ClInclude Include="Terminal.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonParserUtil.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

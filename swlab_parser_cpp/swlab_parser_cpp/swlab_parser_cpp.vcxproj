@@ -118,7 +118,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Assign.cpp" />
+    <ClCompile Include="BinOp.cpp" />
+    <ClCompile Include="Expr.cpp" />
+    <ClCompile Include="Lexer.cpp" />
+    <ClCompile Include="Lit.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="Token.cpp" />
+    <ClCompile Include="Var.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Assign.h" />
+    <ClInclude Include="BinOp.h" />
+    <ClInclude Include="CommonParserUtil.h" />
+    <ClInclude Include="Expr.h" />
+    <ClInclude Include="Lexer.h" />
+    <ClInclude Include="Lit.h" />
+    <ClInclude Include="Main.h" />
+    <ClInclude Include="StackElement.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="Terminal.h" />
+    <ClInclude Include="Token.h" />
+    <ClInclude Include="Var.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
