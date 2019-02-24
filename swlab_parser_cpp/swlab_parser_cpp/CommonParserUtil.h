@@ -1,4 +1,5 @@
 #pragma once
+#include "Terminal.h"
 #include <iostream>
 #include <fstream>
 #include <functional>
@@ -13,10 +14,10 @@ template <typename TOKEN>
 class CommonParserUtil
 {
 private:
-	// test용 tokenBuilder
 	map<string, function<TOKEN(string)>> tokenBuilder;
 	vector<TOKEN> tokenV;
-	vector<TOKEN> V;
+	vector<Terminal<TOKEN>> terminals;
+	vector<string> RegExprToken;
 
 public:
 	CommonParserUtil()
@@ -30,32 +31,60 @@ public:
 
 	void lexing(ifstream reader)
 	{
-		string read_string;
-		while (getline(reader, read_string))
+		vector<string> lines;
+		if (reader.is_open())
 		{
-			if (reader.is_open())
+			string line;
+			vector<regex> regExps;
+
+			while (getline(reader, line)) lines.push_back(line);
+			for (auto it : tokenBuilder) regExps.push_back(regex(it.first));
+			for (int i = 0; i < lines.size(); i++) matching(regExps, lines[i], i + 1);
+
+		}
+		else
+		{
+			// 파일이 안열림 -> 파일 경로 에러?
+		}
+	}
+
+	//matching function
+	void matching(vector<regex> &regExps, string &_line, int lineno)
+	{
+		int charIdx = 0;
+		string line = _line;
+		smatch sm;
+		while (line != "")
+		{
+			bool matched = false;
+			for (auto it : regExps)
 			{
-				cout << "read string: " << read_string << endl;
-				regex number("[0-9]+");
-				sregex_iterator it(read_string.begin(), read_string.end(), number);
-				sregex_iterator end;
-				while (it != end)
+				//매칭되는것이 있고, prefix가 없을경우 -> 첫문자부터 매칭되는경우
+				if (regex_search(line, sm, it) && sm.prefix() == "")
 				{
-					smatch m = *it;
-					printf("%s\n", m.str(0).c_str());
-					//tokenV.push_back(tokenBuilder["[0-9]+"](m.str(0).c_str()));
-					it++;
+					terminals.push_back(Terminal<TOKEN>(sm[0], TOKEN::ADD, charIdx, lineno));
+					line = sm.suffix();
+					charIdx += sm[0].length();
+					matched = true;
+					break;
 				}
 			}
-			else
+			if (!matched)
 			{
-				cout << "파일을 찾을 수 없습니다." << endl;
+				cout << "no matching! \n";
+				return;
 			}
+		}
+	}
 
-			for (int i = 0; i < tokenV.size(); i++)
-			{
-				//cout << getStrToken(tokenV[i]) << endl;
-			}
+	void testTerminals()
+	{
+		cout << "Terminals size: " << terminals.size() << endl;
+		for (auto it : terminals)
+		{
+			cout << "terminal: ";
+			cout << it.getSyntax() << " " << getStrToken(it.getToken()) << " ";
+			cout << it.getCharIdx() << " " << it.getLineIdx() << "\n";
 		}
 	}
 

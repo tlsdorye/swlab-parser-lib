@@ -4,7 +4,6 @@ using namespace std;
 
 enum class Token
 {
-	END_OF_TOKEN,
 	EMPTY_SPACE,
 	OPEN_PAREN,
 	CLOSE_PAREN,

@@ -13,7 +13,7 @@ Lexer::Lexer(CommonParserUtil<Token> &pu)
 	pu.lex("\\/", [](string text)->Token {return Token::DIV; });
 	pu.lex("\\=", [](string text)->Token {return Token::EQ; });
 	pu.lex("\\;", [](string text)->Token {return Token::SEMICOLON; });
-	pu.lex("[a-zA-Z]+[a-zA-Z0-9]", [](string text)->Token {return Token(Token::IDENTIFIER); });
+	pu.lex("[a-zA-Z]+[a-zA-Z0-9]*", [](string text)->Token {return Token(Token::IDENTIFIER); });
 }
 
 // cpp lambda: [introducer](parameter) ->return-type { statement };

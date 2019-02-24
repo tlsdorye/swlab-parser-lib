@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="multiline.txt" />
+    <Text Include="oneline.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

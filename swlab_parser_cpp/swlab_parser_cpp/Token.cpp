@@ -2,7 +2,7 @@
 
 string strToken[] = 
 {
-	"$","_", "(", ")",
+	"_", "(", ")",
 	"identifier", "integer_number",
 	"+", "-", "*", "/", "=", ";"
 };
