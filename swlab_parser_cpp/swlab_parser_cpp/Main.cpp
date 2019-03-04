@@ -27,8 +27,12 @@ int main()
 	Lexer lexer(pu);
 	//pu.testTokenBuilder();
 
-	string filePath = "oneline.txt";
-	//pu.lexing(ifstream(filePath));
+	string filePath = "multiline.txt";
+	pu.lexing(ifstream(filePath));
+	pu.testTerminals();
+}
+
+/*
 
 	string line[] =
 	{
@@ -47,7 +51,6 @@ int main()
 			cout << "Suffix: '" << sm.suffix() << "'\n\n";
 		}
 	}
+	}
 
-	pu.lexing(ifstream(filePath));
-	pu.testTerminals();
-}
+*/
