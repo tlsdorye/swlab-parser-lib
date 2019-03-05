@@ -39,22 +39,20 @@ public:
 		if (reader.is_open())
 		{
 			string line;
-			//vector<regex> regExps;
-			vector<pair<regex, string>> regExps;
 
 			while (getline(reader, line)) lines.push_back(line);
-			for (auto it : tokenBuilder) regExps.push_back({ regex(it.first), it.first });
-			for (int i = 0; i < lines.size(); i++) matching(regExps, lines[i], i + 1);
-
+			for (int i = 0; i < lines.size(); i++) matching(lines[i], i + 1);
 		}
 		else
 		{
 			// 파일이 안열림 -> 파일 경로 에러?
+			cout << "error - ifstream\n";
+			return;
 		}
 	}
 
 	//matching function
-	void matching(vector<pair<regex, string>> &regExps, string &_line, int lineno)
+	void matching(string &_line, int lineno)
 	{
 		int charIdx = 0;
 		string line = _line;
@@ -62,12 +60,15 @@ public:
 		while (line != "")
 		{
 			bool matched = false;
-			for (auto it : regExps)
+			for (auto it : tokenBuilder)
 			{
-				//매칭되는것이 있고, prefix가 없을경우 -> 첫문자부터 매칭되는경우
-				if (regex_search(line, sm, it.first) && sm.prefix() == "")
+				regex curr_regex = regex(it.first);
+				
+				// 매칭 되는것이 있고, prefix가 없을 경우 -> 첫문자부터 매칭되는경우
+				if (regex_search(line, sm, curr_regex) && sm.prefix() == "")
 				{
-					terminals.push_back(Terminal<TOKEN>(sm[0], tokenBuilder[it.second](sm[0]), charIdx, lineno));
+					// sm[0]: matched string_token
+					terminals.push_back(Terminal<TOKEN>(sm[0], (it.second)(sm[0]), charIdx, lineno));
 					line = sm.suffix();
 					charIdx += sm[0].length();
 					matched = true;
@@ -76,7 +77,7 @@ public:
 			}
 			if (!matched)
 			{
-				cout << "no matching! \n";
+				cout << "no matching!!\n";
 				return;
 			}
 		}
@@ -106,6 +107,3 @@ public:
 		});
 	}
 };
-
-
-
