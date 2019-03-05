@@ -28,29 +28,8 @@ int main()
 	//pu.testTokenBuilder();
 
 	string filePath = "multiline.txt";
-	pu.lexing(ifstream(filePath));
-	pu.testTerminals();
+	//pu.lexing(ifstream(filePath));
+	//pu.testTerminals();
+	Parser P;
+	P.Parsing(ifstream(filePath), false);
 }
-
-/*
-
-	string line[] =
-	{
-		"x x ++ = 123 123 123 ;"
-	};
-	regex rx("[0-9]+");
-	smatch sm;
-	for (auto it : line)
-	{
-		if (regex_search(it, sm, rx))
-		{
-			cout << "matchs for: '" << it << "'\n";
-			cout << "Prefix: '" << sm.prefix() << "'\n";
-			for (size_t i = 0; i < sm.size(); i++)
-				cout << i << ": '" << sm[i] << "'\n";
-			cout << "Suffix: '" << sm.suffix() << "'\n\n";
-		}
-	}
-	}
-
-*/
