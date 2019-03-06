@@ -15,3 +15,8 @@ Expr Assign::getRhs()
 {
 	return rhs;
 }
+
+void Assign::toString()
+{
+
+}

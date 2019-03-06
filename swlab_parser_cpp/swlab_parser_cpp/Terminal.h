@@ -60,5 +60,10 @@ public:
 	{
 		this->lineIdx = lineIdx;
 	}
+
+	void toString()
+	{
+
+	}
 };
 

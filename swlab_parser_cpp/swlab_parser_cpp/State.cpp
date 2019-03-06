@@ -18,3 +18,8 @@ void State::setState(int state)
 {
 	this->state = state;
 }
+
+void State::toString()
+{
+	
+}

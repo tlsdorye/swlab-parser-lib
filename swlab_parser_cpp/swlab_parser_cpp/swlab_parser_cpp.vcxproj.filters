@@ -119,6 +119,9 @@
     <ClInclude Include="Parser.h">
       <Filter>헤더 파일\example\arith\parser</Filter>
     </ClInclude>
+    <ClInclude Include="Nonterminal.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="multiline.txt">

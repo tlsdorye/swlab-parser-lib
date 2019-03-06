@@ -9,3 +9,8 @@ int Lit::getInteger()
 {
 	return integerLit;
 }
+
+void Lit::toString()
+{
+
+}

@@ -21,3 +21,8 @@ Expr BinOp::getLeft()
 {
 	return left;
 }
+
+void BinOp::toString()
+{
+
+}

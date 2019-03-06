@@ -10,3 +10,9 @@ string Var::getVarName()
 {
 	return varName;
 }
+
+
+void Var::toString()
+{
+
+}

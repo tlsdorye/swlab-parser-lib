@@ -7,4 +7,6 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <regex>
+#include <cstring>
 using namespace std;

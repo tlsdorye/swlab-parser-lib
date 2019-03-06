@@ -10,5 +10,6 @@ public:
 	Assign(string varName, Expr rhs);
 	string getVarName();
 	Expr getRhs();
+	void toString();
 };
 

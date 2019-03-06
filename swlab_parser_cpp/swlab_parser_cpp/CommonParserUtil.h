@@ -1,5 +1,6 @@
 #pragma once
 #include "Terminal.h"
+#include "State.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -7,19 +8,23 @@
 #include <string>
 #include <map> // test용
 #include <vector>
+#include <stack>
 #include <array>
 #include <regex>
 #include <utility>
 using namespace std;
 
-template <typename TOKEN>
+template <typename TOKEN, typename AST>
 class CommonParserUtil
 {
 private:
-	map<string, function<TOKEN(string)>> tokenBuilder;
-	vector<TOKEN> tokenV;
+	map<string, function<TOKEN(string)>> tokenBuilders;
+	map<string, function<vector<AST>()>> treeBuilders;
 	vector<Terminal<TOKEN>> terminals;
-	vector<string> RegExprToken;
+	vector<string> grammar_rules;
+	int grammar_rule_index;
+	stack<StackElement*> parse_stack;
+	string startSymbol;
 
 public:
 	CommonParserUtil()
@@ -30,25 +35,32 @@ public:
 	// function < return-type (parameter)> functor
 	void lex(string regExp, function<TOKEN(string)> func) 
 	{
-		tokenBuilder[regExp] = func;
+		tokenBuilders[regExp] = func;
 	}
 
-	void lexing(ifstream reader)
+	void lexing(vector<string> &filepaths)
 	{
-		vector<string> lines;
-		if (reader.is_open())
+		for (auto it : filepaths)
 		{
-			string line;
+			ifstream reader = ifstream(it);
+			vector<string> lines;
+			if (reader.is_open())
+			{
+				string line;
 
-			while (getline(reader, line)) lines.push_back(line);
-			for (int i = 0; i < lines.size(); i++) matching(lines[i], i + 1);
+				while (getline(reader, line)) lines.push_back(line);
+				for (int i = 0; i < lines.size(); i++) matching(lines[i], i + 1);
+			}
+			else
+			{
+				// 파일이 안열림 -> 파일 경로 에러?
+				cout << "error - ifstream\n";
+				return;
+			}
 		}
-		else
-		{
-			// 파일이 안열림 -> 파일 경로 에러?
-			cout << "error - ifstream\n";
-			return;
-		}
+
+		//test
+		testTerminals();
 	}
 
 	//matching function
@@ -60,7 +72,7 @@ public:
 		while (line != "")
 		{
 			bool matched = false;
-			for (auto it : tokenBuilder)
+			for (auto it : tokenBuilders)
 			{
 				regex curr_regex = regex(it.first);
 				
@@ -83,13 +95,43 @@ public:
 		}
 	}
 
+	vector<AST> get(int idx)
+	{
+
+	}
+
+	void ruleStartSymbol(string startSymbol)
+	{
+		this->startSymbol = startSymbol;
+	}
+
+	void rule(string productionRule, function<vector<AST>()> func)
+	{
+		treeBuilders[produtionRule] = func;
+	}
+
+	void parsing(vector<string> filepaths)
+	{
+		readInitialize();
+		lexing(filepaths);
+
+		parse_stack = stack<StackElement*>();
+		parse_stack.push(&State(0));
+		int x = dynamic_cast<State*>(parse_stack.top())->getState();
+		cout << x << endl;
+	}
+
+	void readInitialize()
+	{
+
+	}
+
 	void testTerminals()
 	{
 		cout << "Terminals size: " << terminals.size() << endl;
 		for (auto it : terminals)
 		{
 			cout << "terminal: ";
-			
 			cout << setw(5) << it.getSyntax() << " ";
 			cout << setw(15) << getStrToken(it.getToken()) << " ";
 			cout << setw(3) << it.getCharIdx() << " ";
@@ -100,7 +142,7 @@ public:
 	//testprint to tokenBuilder
 	void testTokenBuilder()
 	{
-		for_each(tokenBuilder.begin(), tokenBuilder.end(), [](auto it) {
+		for_each(tokenBuilders.begin(), tokenBuilders.end(), [](auto it) {
 			cout << "< regExp: " << it.first;
 			cout << ", Token: " << getStrToken((it.second)("+"));
 			cout << " >\n";

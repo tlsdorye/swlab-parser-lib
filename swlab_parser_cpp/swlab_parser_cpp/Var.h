@@ -8,6 +8,6 @@ private:
 public:
 	Var(string varName);
 	string getVarName();
-
+	void toString();
 };
 

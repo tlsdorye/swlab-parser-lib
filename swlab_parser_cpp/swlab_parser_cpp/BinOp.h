@@ -19,5 +19,6 @@ public:
 	OpKind getOpKind();
 	Expr getRight();
 	Expr getLeft();
+	void toString();
 };
 

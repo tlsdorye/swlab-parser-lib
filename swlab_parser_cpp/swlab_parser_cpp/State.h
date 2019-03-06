@@ -10,5 +10,6 @@ public:
 	State(int state);
 	int getState();
 	void setState(int state);
+	void toString();
 };
 

@@ -1,6 +1,4 @@
 #include "Main.h"
-#include <regex>
-#include <cstring>
 using namespace std;
 
 void printToken(Token tok)
@@ -23,13 +21,15 @@ int main()
 	//printToken(T);
 	//printTerminal(Term);
 
-	CommonParserUtil<Token> pu;
+	CommonParserUtil<Token, Expr> pu;
 	Lexer lexer(pu);
 	//pu.testTokenBuilder();
 
-	string filePath = "multiline.txt";
-	//pu.lexing(ifstream(filePath));
+	vector<string> filepaths;
+	filepaths.push_back("oneline.txt");
+	//filepaths.push_back("multiline.txt");
+	//pu.lexing(filepaths);
 	//pu.testTerminals();
 	Parser P;
-	P.Parsing(ifstream(filePath), false);
+	P.parsing(filepaths);
 }

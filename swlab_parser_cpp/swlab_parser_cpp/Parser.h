@@ -1,18 +1,17 @@
 #pragma once
 #include "Token.h"
 #include "CommonParserUtil.h"
-#include <fstream>
-#include <iostream>
+#include "Lexer.h"
+#include "Expr.h"
+#include <vector>
 using namespace std;
 
 class Parser
 {
 private:
-	CommonParserUtil<Token> pu;
+	CommonParserUtil<Token, Expr> pu;
 public:
 	Parser();
-	void Parsing(ifstream reader, bool flag);
-	void Parsing(ifstream reader);
-	void Lexing(ifstream reader, bool flag);
-	void Lexing(ifstream reader);
+	void parsing(vector<string> filepaths);
+	void lexing(vector<string> filepaths);
 };

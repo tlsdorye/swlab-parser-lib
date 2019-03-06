@@ -8,5 +8,9 @@ public:
 	{
 
 	}
+	virtual void toString()
+	{
+
+	}
 };
 
