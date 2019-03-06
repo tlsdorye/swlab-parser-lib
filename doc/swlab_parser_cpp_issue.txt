@@ -1,8 +1,21 @@
 ISSUE
 
 1. Lexer에서 [ \t\n]을 받으면 null 넘겨주는 방법
--> 일단은 "_" - EMPTY_SPACE 라는 상수를 하나 더 만들어서 넘겨주는 방법으로 진행
+>> 일단은 "_" - EMPTY_SPACE 라는 상수를 하나 더 만들어서 넘겨주는 방법으로 진행
 
 2. template class는 h에서 선언과 정의 둘다 해야함(hpp만들어서 하는방법 공부)
--> 일단 h안에서 선언정의 둘다하는 방법으로 진행
+>> 일단 h안에서 선언정의 둘다하는 방법으로 진행
 
+---------------------------------------------------------------------------------
+
+1. downcasting 문제
+>> c++에서는 downcasting 간단히 못함
+=> downcasting을 하려면 virtual 함수여야 함
+=> dynamic_cast<taget_type*>(curr_type*) 이용
+
+
+2. Object 가없는 문제
+>> Nonterminal 은 사실 tree
+   Nonterminal은 Expr을 가지거나, ArrayList<Expr> 을 가진다
+=> Nonterminal을 CONT<AST>를 가지는 template class로 변경
+   원소가 하나 인 경우도 Container에 담아서 사용한다.

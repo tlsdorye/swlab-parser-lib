@@ -22,8 +22,13 @@ private:
 	map<string, function<TOKEN(string)>> tokenBuilders;
 	map<string, function<CONT<AST>()>> treeBuilders;
 	vector<Terminal<TOKEN>> terminals;
+	
+	vector<string> action_table;
+	vector<string> goto_table;
 	vector<string> grammar_rules;
+
 	int grammar_rule_index;
+
 	stack<StackElement*> parse_stack;
 	string startSymbol;
 
@@ -99,10 +104,6 @@ public:
 	CONT<AST> get(int idx)
 	{
 		CONT<AST> ret;
-		ret.push_back();
-		ret.push_back();
-		ret.push_back();
-		ret.push_back();
 		return ret;
 	}
 
@@ -134,7 +135,53 @@ public:
 
 	void readInitialize()
 	{
+		ifstream grammarReader("grammar_rules.txt");
+		ifstream actionReader("action_table.txt");
+		ifstream gotoReader("goto_table.txt");
 
+		string line;
+		grammar_rules.clear(); // capacity는 그대로
+		action_table.clear();
+		goto_table.clear();
+
+		if (grammarReader.is_open())
+		{
+			cout << "A\n";
+			while (getline(grammarReader, line))
+			{
+				vector<string> words;
+			}
+		}
+		else
+		{
+			// grammarReader 안열림
+		}
+
+		if (actionReader.is_open())
+		{
+			cout << "B\n";
+			while (getline(actionReader, line))
+			{
+
+			}
+		}
+		else
+		{
+			// actionReader 안열림
+		}
+
+		if (gotoReader.is_open())
+		{
+			cout << "C\n";
+			while (getline(gotoReader, line))
+			{
+
+			}
+		}
+		else
+		{
+			// gotoReader 안열림
+		}
 	}
 
 	void testTerminals()
@@ -165,7 +212,7 @@ public:
 		cout << "treeBuilder size: " << treeBuilders.size() << endl;
 		for_each(treeBuilders.begin(), treeBuilders.end(), [](auto it) {
 			cout << "B\n";
-			vector<Expr> astree = (it.second)();
+			CONT<AST> astree = (it.second)();
 			cout << "productionRule: " << it.first;
 			cout << ", AST: ";
 			for (auto it : astree) cout << "[" << it.toString() << "] ";
