@@ -8,6 +8,6 @@ private:
 public:
 	Lit(int i);
 	int getInteger();
-	void toString();
+	string toString();
 };
 

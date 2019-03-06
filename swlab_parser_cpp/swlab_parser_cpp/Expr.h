@@ -6,6 +6,6 @@ class Expr
 {
 public:
 	Expr();
-	virtual void toString();
+	virtual string toString();
 };
 

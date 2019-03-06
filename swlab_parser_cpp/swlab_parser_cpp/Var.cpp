@@ -12,7 +12,7 @@ string Var::getVarName()
 }
 
 
-void Var::toString()
+string Var::toString()
 {
-
+	return string("Var(" + varName +")");
 }

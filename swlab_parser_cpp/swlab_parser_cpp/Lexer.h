@@ -6,5 +6,5 @@
 class Lexer
 {
 public:
-	Lexer(CommonParserUtil<Token, Expr> &pu);
+	Lexer(CommonParserUtil<Token, Expr, vector> &pu);
 };

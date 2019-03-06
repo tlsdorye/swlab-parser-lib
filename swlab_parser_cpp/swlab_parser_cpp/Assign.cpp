@@ -16,7 +16,7 @@ Expr Assign::getRhs()
 	return rhs;
 }
 
-void Assign::toString()
+string Assign::toString()
 {
-
+	return string("Assign(" + varName + "," + rhs.toString() + ")");
 }

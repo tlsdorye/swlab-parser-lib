@@ -14,12 +14,13 @@
 #include <utility>
 using namespace std;
 
-template <typename TOKEN, typename AST>
+template <typename TOKEN, typename AST, 
+	template<typename ELEM, typename = allocator<ELEM>> class CONT>
 class CommonParserUtil
 {
 private:
 	map<string, function<TOKEN(string)>> tokenBuilders;
-	map<string, function<vector<AST>()>> treeBuilders;
+	map<string, function<CONT<AST>()>> treeBuilders;
 	vector<Terminal<TOKEN>> terminals;
 	vector<string> grammar_rules;
 	int grammar_rule_index;
@@ -95,9 +96,16 @@ public:
 		}
 	}
 
-	vector<AST> get(int idx)
+	CONT<AST> get(int idx)
 	{
+		CONT<AST> ret;
+		return ret;
+	}
 
+	string getText(int idx)
+	{
+		string ret;
+		return ret;
 	}
 
 	void ruleStartSymbol(string startSymbol)
@@ -105,9 +113,10 @@ public:
 		this->startSymbol = startSymbol;
 	}
 
-	void rule(string productionRule, function<vector<AST>()> func)
+	void rule(string productionRule, function<CONT<AST>()> func)
 	{
-		treeBuilders[produtionRule] = func;
+		cout << "A\n";
+		treeBuilders[productionRule] = func;
 	}
 
 	void parsing(vector<string> filepaths)
@@ -140,12 +149,24 @@ public:
 	}
 
 	//testprint to tokenBuilder
-	void testTokenBuilder()
+	void testTokenBuilders()
 	{
 		for_each(tokenBuilders.begin(), tokenBuilders.end(), [](auto it) {
 			cout << "< regExp: " << it.first;
 			cout << ", Token: " << getStrToken((it.second)("+"));
 			cout << " >\n";
+		});
+	}
+
+	void testTreeBuilders()
+	{
+		for_each(treeBuilders.begin(), treeBuilders.end(), [](auto it) {
+			cout << "B\n";
+			vector<Expr> astree = (it.second)();
+			cout << "productionRule: " << it.first;
+			cout << ", AST: ";
+			for (auto it : astree) cout << "[" << it.toString() << "] ";
+			cout << "\n";	
 		});
 	}
 };

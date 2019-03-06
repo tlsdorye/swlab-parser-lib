@@ -1,6 +1,6 @@
 #include "Lexer.h"
 
-Lexer::Lexer(CommonParserUtil<Token, Expr> &pu)
+Lexer::Lexer(CommonParserUtil<Token, Expr, vector> &pu)
 {
 	//pu.lexEndToken(Token::END_OF_TOKEN);
 	pu.lex("[ \t\n]", [](string text)->Token {return Token::EMPTY_SPACE; });

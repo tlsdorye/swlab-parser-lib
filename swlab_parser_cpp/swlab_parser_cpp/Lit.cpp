@@ -10,7 +10,7 @@ int Lit::getInteger()
 	return integerLit;
 }
 
-void Lit::toString()
+string Lit::toString()
 {
-
+	return string("Lit(" + to_string(integerLit) + ")");
 }

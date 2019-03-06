@@ -21,7 +21,7 @@ int main()
 	//printToken(T);
 	//printTerminal(Term);
 
-	CommonParserUtil<Token, Expr> pu;
+	CommonParserUtil<Token, Expr, vector> pu;
 	Lexer lexer(pu);
 	//pu.testTokenBuilder();
 
@@ -32,4 +32,5 @@ int main()
 	//pu.testTerminals();
 	Parser P;
 	P.parsing(filepaths);
+	pu.testTreeBuilders();
 }
