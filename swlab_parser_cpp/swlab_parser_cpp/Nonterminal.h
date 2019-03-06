@@ -10,7 +10,7 @@ class Nonterminal : public StackElement
 private:
 	CONT<AST> tree;
 public:
-	Nonterminal(LIST<AST> tree)
+	Nonterminal(CONT<AST> tree)
 	{
 		this->tree = tree;
 	}

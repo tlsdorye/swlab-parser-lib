@@ -99,6 +99,10 @@ public:
 	CONT<AST> get(int idx)
 	{
 		CONT<AST> ret;
+		ret.push_back();
+		ret.push_back();
+		ret.push_back();
+		ret.push_back();
 		return ret;
 	}
 
@@ -115,7 +119,6 @@ public:
 
 	void rule(string productionRule, function<CONT<AST>()> func)
 	{
-		cout << "A\n";
 		treeBuilders[productionRule] = func;
 	}
 
@@ -127,7 +130,6 @@ public:
 		parse_stack = stack<StackElement*>();
 		parse_stack.push(&State(0));
 		int x = dynamic_cast<State*>(parse_stack.top())->getState();
-		cout << x << endl;
 	}
 
 	void readInitialize()
@@ -160,6 +162,7 @@ public:
 
 	void testTreeBuilders()
 	{
+		cout << "treeBuilder size: " << treeBuilders.size() << endl;
 		for_each(treeBuilders.begin(), treeBuilders.end(), [](auto it) {
 			cout << "B\n";
 			vector<Expr> astree = (it.second)();

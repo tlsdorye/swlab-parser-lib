@@ -18,4 +18,5 @@ public:
 	Parser();
 	void parsing(vector<string> filepaths);
 	void lexing(vector<string> filepaths);
+	void testCommonParserUtil_TreeBuilder();
 };

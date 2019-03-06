@@ -78,6 +78,11 @@ void Parser::lexing(vector<string> filepaths)
 	pu.lexing(filepaths);
 }
 
+void Parser::testCommonParserUtil_TreeBuilder()
+{
+	pu.testTreeBuilders();
+}
+
 // cpp lambda: [introducer](parameter) ->return-type { statement };
 // cpp lambda: [introducer](parameter) {statement}
 // [introducer]: []안에 외부변수를 써넣으면 람다 함수가 이를 capture해서 람다 내부에서 이용 가능
