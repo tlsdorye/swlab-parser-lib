@@ -12,6 +12,9 @@
 #include <array>
 #include <regex>
 #include <utility>
+#include <algorithm>
+#include <cctype>
+#include <locale>
 using namespace std;
 
 template <typename TOKEN, typename AST, 
@@ -44,7 +47,7 @@ public:
 		tokenBuilders[regExp] = func;
 	}
 
-	void lexing(vector<string> &filepaths)
+	void lexing(const vector<string> &filepaths)
 	{
 		for (auto it : filepaths)
 		{
@@ -66,7 +69,7 @@ public:
 		}
 
 		//test
-		testTerminals();
+		//testTerminals();
 	}
 
 	//matching function
@@ -104,6 +107,7 @@ public:
 	CONT<AST> get(int idx)
 	{
 		CONT<AST> ret;
+		string productionRuleStr = grammar_rules[grammar_rule_index];
 		return ret;
 	}
 
@@ -123,7 +127,7 @@ public:
 		treeBuilders[productionRule] = func;
 	}
 
-	void parsing(vector<string> filepaths)
+	void parsing(const vector<string> filepaths)
 	{
 		readInitialize();
 		lexing(filepaths);
@@ -131,6 +135,29 @@ public:
 		parse_stack = stack<StackElement*>();
 		parse_stack.push(&State(0));
 		int x = dynamic_cast<State*>(parse_stack.top())->getState();
+	}
+
+	string &trim(std::string &s) {
+		s.erase(std::find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
+		s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
+		return s;
+	}
+
+	vector<string> split(string line, const string &delimiter)
+	{
+		vector<string> tokens;
+		string token;
+		size_t pos;
+		while ((pos = line.find(delimiter)) != string::npos)
+		{
+			token = line.substr(0, pos);
+			trim(token);
+			tokens.push_back(token);
+			line.erase(0, pos + delimiter.length());
+		}
+		trim(line);
+		tokens.push_back(line);
+		return tokens;
 	}
 
 	void readInitialize()
@@ -146,42 +173,50 @@ public:
 
 		if (grammarReader.is_open())
 		{
-			cout << "A\n";
 			while (getline(grammarReader, line))
 			{
-				vector<string> words;
+				vector<string> words = split(line, ":");
+				int gr_num = stoi(words[0]);
+				grammar_rules.push_back("");
+				if (grammar_rules.size() - 1 == gr_num) grammar_rules[gr_num] = words[1];
+				else
+				{
+					"error: grammar_rule is not matched grammar_num\n";
+					return;
+				}
 			}
 		}
 		else
 		{
-			// grammarReader 안열림
+			"error: grammarReader is not open\n";
+			return;
 		}
 
 		if (actionReader.is_open())
-		{
-			cout << "B\n";
-			while (getline(actionReader, line))
-			{
-
-			}
-		}
+			while (getline(actionReader, line)) action_table.push_back(line);
 		else
 		{
-			// actionReader 안열림
+			"error: actionReader is not open\n";
+			return;
 		}
 
-		if (gotoReader.is_open())
-		{
-			cout << "C\n";
-			while (getline(gotoReader, line))
-			{
-
-			}
-		}
+		if (gotoReader.is_open()) 
+			while (getline(gotoReader, line)) goto_table.push_back(line);
 		else
 		{
-			// gotoReader 안열림
+			"error: gotoReader is not open\n";
+			return;
 		}
+
+		//test
+		//testReader();
+	}
+
+	void testReader()
+	{
+		for (int i = 0; i < grammar_rules.size(); i++) cout << i << ":: ^" << grammar_rules[i] << "^\n";
+		for (int i = 0; i < action_table.size(); i++) cout << i << ":: ^" << action_table[i] << "^\n";
+		for (int i = 0; i < goto_table.size(); i++) cout << i << ":: ^" << goto_table[i] << "^\n";
 	}
 
 	void testTerminals()
