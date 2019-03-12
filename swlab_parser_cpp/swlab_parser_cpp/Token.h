@@ -1,22 +1,16 @@
 #pragma once
-#include <string>
+#include "TokenInterface.h"
+#include <map>
 using namespace std;
 
-enum class Token
+class Token : public TokenInterface
 {
-	EMPTY_SPACE,
-	OPEN_PAREN,
-	CLOSE_PAREN,
-	IDENTIFIER,
-	INTEGER_NUMBER,
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	EQ,
-	SEMICOLON
+private:
+	static map<string, string> tokenmap;
+	string strToken;
+public:
+	Token();
+	Token(string s);
+	bool checkToken(string s);
+	string toString();
 };
-
-string strToken[];
-
-string getStrToken(Token _token);

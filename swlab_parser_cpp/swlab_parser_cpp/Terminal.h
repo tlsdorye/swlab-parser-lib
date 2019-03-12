@@ -11,8 +11,6 @@ private:
 	int charIdx;
 	int lineIdx;
 public:
-	Terminal() {}
-
 	Terminal(string syntax, TOKEN tok, int charIdx, int lineIdx)
 	{
 		this->syntax = syntax;

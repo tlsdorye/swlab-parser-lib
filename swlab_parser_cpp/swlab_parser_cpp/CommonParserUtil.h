@@ -1,6 +1,6 @@
 #pragma once
 #include "Terminal.h"
-#include "State.h"
+#include "ParseState.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -9,30 +9,34 @@
 #include <map> // test용
 #include <vector>
 #include <stack>
+#include <deque>
 #include <array>
 #include <regex>
 #include <utility>
 #include <algorithm>
 #include <cctype>
 #include <locale>
+#include <list>
+#include <type_traits>
 using namespace std;
 
 template <typename TOKEN, typename AST, 
 	template<typename ELEM, typename = allocator<ELEM>> class CONT>
 class CommonParserUtil
 {
+	static_assert(is_base_of<TokenInterface, TOKEN>::value, "TOKEN muse inherit from TokenInterface");
 private:
 	map<string, function<TOKEN(string)>> tokenBuilders;
 	map<string, function<CONT<AST>()>> treeBuilders;
-	vector<Terminal<TOKEN>> terminals;
+	list<Terminal<TOKEN>> terminals;
 	
-	vector<string> action_table;
-	vector<string> goto_table;
+	vector<map<string, vector<string>>> action_tables;
+	vector<string> goto_tables;
 	vector<string> grammar_rules;
 
 	int grammar_rule_index;
 
-	stack<StackElement*> parse_stack;
+	deque<StackElement*> parse_stack;
 	string startSymbol;
 
 public:
@@ -69,6 +73,7 @@ public:
 		}
 
 		//test
+		//testTokenBuilders();
 		//testTerminals();
 	}
 
@@ -104,11 +109,29 @@ public:
 		}
 	}
 
+	vector<string> split_line(string line, string regExp)
+	{
+		vector<string> tokens;
+		regex reg(regExp);
+		smatch sm;
+		while (regex_search(line, sm, reg))
+		{
+			for (int i = 1; i < sm.size(); i++)
+				tokens.push_back(sm[i].str());
+			line = sm.suffix().str();
+		}
+		return tokens;
+	}
+
 	CONT<AST> get(int idx)
 	{
-		CONT<AST> ret;
-		string productionRuleStr = grammar_rules[grammar_rule_index];
-		return ret;
+		string productionRule = grammar_rules[grammar_rule_index];
+		vector<string> splitRule = split_line(productionRule, "([^\t ]+)");
+		int length = splitRule.size() - 2;
+		int last_stack_tree_index = parse_stack.size() - 1;
+		int offset = (length * 2) - ((idx - 1) * 2 + 1);
+		CONT<AST> tree;// = parse_stack[last_stack_tree_index - offset];
+		return tree;
 	}
 
 	string getText(int idx)
@@ -132,16 +155,165 @@ public:
 		readInitialize();
 		lexing(filepaths);
 
-		parse_stack = stack<StackElement*>();
-		parse_stack.push(&State(0));
-		int x = dynamic_cast<State*>(parse_stack.top())->getState();
+		parse_stack = deque<StackElement*>();
+		
+		parse_stack.push_back(&ParseState("0")); // <= 예외걸림
+		//int x = dynamic_cast<ParseState*>(parse_stack.back())->getState();
+		
+		/*
+		while (!terminals.empty())
+		{
+			ParseState* currState = dynamic_cast<ParseState*>(parse_stack.back());
+			Terminal<TOKEN> currTerminal = terminals.front();
+
+			list<string> data_arr;
+			string order = data_arr.front();
+		}
+		*/
+
 	}
 
-	string &trim(std::string &s) {
-		s.erase(std::find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
-		s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
-		return s;
+	void readInitialize()
+	{
+		ifstream grammarReader("grammar_rules.txt");
+		ifstream actionReader("action_table.txt");
+		ifstream gotoReader("goto_table.txt");
+
+		string line;
+		grammar_rules.clear(); // capacity는 그대로
+		action_tables.clear();
+		goto_tables.clear();
+
+		if (grammarReader.is_open())
+		{
+			while (getline(grammarReader, line))
+			{
+				vector<string> words = split_line(line, "([0-9]+)(?:. )([^\n]+)");
+				if (words.size() < 2 || grammar_rules.size() != stoi(words[0]))
+				{
+					printerror("error: grammar_rule split");
+					return;
+				}
+				grammar_rules.push_back(words[1]);
+			}
+		}
+		else
+		{
+			"error: grammarReader is not open\n";
+			return;
+		}
+
+		if (actionReader.is_open())
+		{
+			while (getline(actionReader, line)) //action_tables.push_back(line);
+			{
+				vector<string> tokens = split_line(line, "([^\t ]+)");
+				int state = stoi(tokens[0]);
+				if (action_tables.size() <= state) action_tables.push_back(map<string, vector<string>>());
+				for (int i = 2; i < tokens.size(); i++) action_tables[state][tokens[1]].push_back(tokens[i]);
+			}
+		}
+			
+		else
+		{
+			"error: actionReader is not open\n";
+			return;
+		}
+
+		if (gotoReader.is_open()) 
+			while (getline(gotoReader, line)) goto_tables.push_back(line);
+		else
+		{
+			"error: gotoReader is not open\n";
+			return;
+		}
+
+		//test
+		//testReader();
 	}
+
+	list<string> check_state(ParseState currState, Terminal<TOKEN> term)
+	{
+		int idx = 0;
+		while (idx < action_table.size())
+		{
+			string action = action_table[idx];
+			vector<string> data = split_line(action, "([^\t ]+)");
+			list<string> return_data;
+			if (currState.getState() == data[0])
+			{
+				int idx1 = 1;
+				TOKEN idx_Token;
+				while (data[idx1] == "" || data[idx] == "\t") idx++;
+				//idx_Token = term.get
+			}
+		}
+	}
+
+	void test_action_tables()
+	{
+		for (int i = 0; i < action_tables.size(); i++)
+		{
+			for (auto it : action_tables[i])
+			{
+				cout << setw(3) << i << ": ";
+				cout << setw(15) << it.first << " => [";
+				for (auto it : it.second) cout << setw(7) << it << " ";
+				cout << "]\n";
+			}
+		}
+	}
+
+	void testReader()
+	{
+		for (int i = 0; i < grammar_rules.size(); i++) cout << setw(3) << i << ": ~" << grammar_rules[i] << "~\n";
+		test_action_tables();
+		for (int i = 0; i < goto_tables.size(); i++) cout << setw(3) << i << ":: ^" << goto_tables[i] << "^\n";
+	}
+
+	void testTerminals()
+	{
+		cout << "Terminals size: " << terminals.size() << endl;
+		for (auto it : terminals)
+		{
+			cout << "terminal: ";
+			cout << setw(5) << it.getSyntax() << " ";
+			cout << setw(15) << it.getToken().toString() << " ";
+			cout << setw(3) << it.getCharIdx() << " ";
+			cout << setw(3) << it.getLineIdx() << "\n";
+		}
+	}
+
+	//testprint to tokenBuilder
+	void testTokenBuilders()
+	{
+		for_each(tokenBuilders.begin(), tokenBuilders.end(), [](auto it) {
+			cout << "< regExp: " << it.first;
+			cout << ", Token: " << (it.second)("+").toString();
+			cout << " >\n";
+		});
+	}
+
+	void testTreeBuilders()
+	{
+		cout << "treeBuilder size: " << treeBuilders.size() << endl;
+		for_each(treeBuilders.begin(), treeBuilders.end(), [](auto it) {
+			cout << "B\n";
+			CONT<AST> astree = (it.second)();
+			cout << "productionRule: " << it.first;
+			cout << ", AST: ";
+			for (auto it : astree) cout << "[" << it.toString() << "] ";
+			cout << "\n";	
+		});
+	}
+
+	void printerror(string s)
+	{
+		cout << s << endl;
+		return;
+	}
+
+	/*
 
 	vector<string> split(string line, const string &delimiter)
 	{
@@ -160,98 +332,12 @@ public:
 		return tokens;
 	}
 
-	void readInitialize()
+	string &trim(std::string &s) 
 	{
-		ifstream grammarReader("grammar_rules.txt");
-		ifstream actionReader("action_table.txt");
-		ifstream gotoReader("goto_table.txt");
-
-		string line;
-		grammar_rules.clear(); // capacity는 그대로
-		action_table.clear();
-		goto_table.clear();
-
-		if (grammarReader.is_open())
-		{
-			while (getline(grammarReader, line))
-			{
-				vector<string> words = split(line, ":");
-				int gr_num = stoi(words[0]);
-				grammar_rules.push_back("");
-				if (grammar_rules.size() - 1 == gr_num) grammar_rules[gr_num] = words[1];
-				else
-				{
-					"error: grammar_rule is not matched grammar_num\n";
-					return;
-				}
-			}
-		}
-		else
-		{
-			"error: grammarReader is not open\n";
-			return;
-		}
-
-		if (actionReader.is_open())
-			while (getline(actionReader, line)) action_table.push_back(line);
-		else
-		{
-			"error: actionReader is not open\n";
-			return;
-		}
-
-		if (gotoReader.is_open()) 
-			while (getline(gotoReader, line)) goto_table.push_back(line);
-		else
-		{
-			"error: gotoReader is not open\n";
-			return;
-		}
-
-		//test
-		//testReader();
+		s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
+		s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
+		return s;
 	}
 
-	void testReader()
-	{
-		for (int i = 0; i < grammar_rules.size(); i++) cout << i << ":: ^" << grammar_rules[i] << "^\n";
-		for (int i = 0; i < action_table.size(); i++) cout << i << ":: ^" << action_table[i] << "^\n";
-		for (int i = 0; i < goto_table.size(); i++) cout << i << ":: ^" << goto_table[i] << "^\n";
-	}
-
-	void testTerminals()
-	{
-		cout << "Terminals size: " << terminals.size() << endl;
-		for (auto it : terminals)
-		{
-			cout << "terminal: ";
-			cout << setw(5) << it.getSyntax() << " ";
-			cout << setw(15) << getStrToken(it.getToken()) << " ";
-			cout << setw(3) << it.getCharIdx() << " ";
-			cout << setw(3) << it.getLineIdx() << "\n";
-		}
-	}
-
-	//testprint to tokenBuilder
-	void testTokenBuilders()
-	{
-		for_each(tokenBuilders.begin(), tokenBuilders.end(), [](auto it) {
-			cout << "< regExp: " << it.first;
-			cout << ", Token: " << getStrToken((it.second)("+"));
-			cout << " >\n";
-		});
-	}
-
-	void testTreeBuilders()
-	{
-		cout << "treeBuilder size: " << treeBuilders.size() << endl;
-		for_each(treeBuilders.begin(), treeBuilders.end(), [](auto it) {
-			cout << "B\n";
-			CONT<AST> astree = (it.second)();
-			cout << "productionRule: " << it.first;
-			cout << ", AST: ";
-			for (auto it : astree) cout << "[" << it.toString() << "] ";
-			cout << "\n";	
-		});
-	}
+	*/
 };

@@ -1,13 +1,32 @@
 #include "Token.h"
 
-string strToken[] = 
+map<string, string> Token::tokenmap =
 {
-	"_", "(", ")",
-	"identifier", "integer_number",
-	"+", "-", "*", "/", "=", ";"
+	{"_", "EMPTY_SPACE"}, {"(", "OPEN_PAREN"},
+	{")", "CLOSE_PAREN"}, {"identifier", "IDENTIFIER"},
+	{"integer_number", "INTEGER_NUMBER"}, {"+", "ADD"},
+	{"-", "SUB"}, {"*", "MUL"}, {"/", "DIV"}, 
+	{"=", "EQ"}, {";", "SEMICOLON"}
 };
 
-string getStrToken(Token token)
+Token::Token() 
 {
-	return strToken[(int)token];
+
+}
+
+Token::Token(string s)
+{
+	strToken = s;
+}
+
+bool Token::checkToken(string s)
+{
+	map<string, string>::iterator it = tokenmap.find(s);
+	if (it != tokenmap.end() && it->second == strToken) return true;
+	return false;
+}
+
+string Token::toString()
+{
+	return strToken;
 }

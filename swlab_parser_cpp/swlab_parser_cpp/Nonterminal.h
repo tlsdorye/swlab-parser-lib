@@ -9,6 +9,7 @@ class Nonterminal : public StackElement
 {
 private:
 	CONT<AST> tree;
+	//Object tree
 public:
 	Nonterminal(CONT<AST> tree)
 	{

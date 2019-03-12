@@ -66,9 +66,6 @@
     <ClCompile Include="Assign.cpp">
       <Filter>소스 파일\example\arith\ast</Filter>
     </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>소스 파일\parserlib</Filter>
-    </ClCompile>
     <ClCompile Include="Lexer.cpp">
       <Filter>소스 파일\example\arith\parser</Filter>
     </ClCompile>
@@ -77,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="Parser.cpp">
       <Filter>소스 파일\example\arith\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="ParseState.cpp">
+      <Filter>소스 파일\parserlib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,9 +101,6 @@
     <ClInclude Include="StackElement.h">
       <Filter>헤더 파일\parserlib</Filter>
     </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>헤더 파일\parserlib</Filter>
-    </ClInclude>
     <ClInclude Include="Terminal.h">
       <Filter>헤더 파일\parserlib</Filter>
     </ClInclude>
@@ -120,6 +117,12 @@
       <Filter>헤더 파일\example\arith\parser</Filter>
     </ClInclude>
     <ClInclude Include="Nonterminal.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
+    <ClInclude Include="ParseState.h">
+      <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
+    <ClInclude Include="TokenInterface.h">
       <Filter>헤더 파일\parserlib</Filter>
     </ClInclude>
   </ItemGroup>
