@@ -33,7 +33,8 @@ private:
 	vector<map<string, vector<string>>> action_table;
 	vector<map<string, vector<string>>> goto_table;
 	vector<string> grammar_table;
-
+	map<string, int> hash_code;
+	
 	int grammar_rule_index;
 
 	deque<StackElement*> parse_stack;
@@ -160,18 +161,28 @@ public:
 		lexing(filepaths);
 
 		parse_stack = deque<StackElement*>();
-		parse_stack.push_back(new ParseState("0"));
+		parse_stack.push_back(new ParseState("0")); // ¹Ýµå½Ã delete
 
 		int y = 1;
-
 		//while (!terminals.empty())
 		while(y--)
 		{
 			string str_state = dynamic_cast<ParseState*>(parse_stack.back())->getState();
 			Terminal<TOKEN> currTerminal = terminals.front();
 			vector<string> action = getAction(stoi(str_state), currTerminal);
+			//
 			for (auto it : action) cout << it << " ";
 			cout << endl;
+			//
+			switch (y)
+			{
+			case 1:
+				break;
+			case 2:
+				break;
+			default:
+				break;
+			}
 		}
 
 	}
@@ -235,7 +246,7 @@ public:
 		//testReader();
 	}
 
-	vector<string> getAction(int& int_state, Terminal<TOKEN>& term)
+	vector<string> getAction(int int_state, Terminal<TOKEN>& term)
 	{
 		//int int_state = stoi(currState);
 		vector<string> action;
@@ -246,8 +257,6 @@ public:
 
 		return action;
 	}
-
-
 
 	void testReader()
 	{

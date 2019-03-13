@@ -30,8 +30,8 @@ int main()
 	//filepaths.push_back("multiline.txt");
 	//pu.lexing(filepaths);
 	//pu.testTerminals();
-	Parser P;
-	P.parsing(filepaths);
+	//Parser P;
+	//P.parsing(filepaths);
 	//P.testCommonParserUtil_TreeBuilder();
 	//ParseState* ps = new ParseState("0");
 	//StackElement* elem = dynamic_cast<StackElement*>(ps);
