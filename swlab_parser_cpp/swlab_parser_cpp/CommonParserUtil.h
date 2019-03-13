@@ -24,7 +24,7 @@ template <typename TOKEN, typename AST,
 	template<typename ELEM, typename = allocator<ELEM>> class CONT>
 class CommonParserUtil
 {
-	static_assert(is_base_of<TokenInterface, TOKEN>::value, "TOKEN muse inherit from TokenInterface");
+	//static_assert(is_base_of<TokenInterface, TOKEN>::value, "TOKEN muse inherit from TokenInterface");
 private:
 	map<string, function<TOKEN(string)>> tokenBuilders;
 	map<string, function<CONT<AST>()>> treeBuilders;
@@ -94,7 +94,11 @@ public:
 				if (regex_search(line, sm, curr_regex) && sm.prefix() == "")
 				{
 					// sm[0]: matched string_token
-					terminals.push_back(Terminal<TOKEN>(sm[0], (it.second)(sm[0]), charIdx, lineno));
+					try {
+						terminals.push_back(Terminal<TOKEN>(sm[0], (it.second)(sm[0]), charIdx, lineno));
+					} 
+					catch (TokenException& e) { e.printerror(); };
+					
 					line = sm.suffix();
 					charIdx += sm[0].length();
 					matched = true;
@@ -232,22 +236,20 @@ public:
 		//testReader();
 	}
 
-	list<string> check_state(ParseState currState, Terminal<TOKEN> term)
+	vector<string> check_state(ParseState currState, Terminal<TOKEN> term)
 	{
-		int idx = 0;
-		while (idx < action_table.size())
-		{
-			string action = action_table[idx];
-			vector<string> data = split_line(action, "([^\t ]+)");
-			list<string> return_data;
-			if (currState.getState() == data[0])
-			{
-				int idx1 = 1;
-				TOKEN idx_Token;
-				while (data[idx1] == "" || data[idx] == "\t") idx++;
-				//idx_Token = term.get
-			}
-		}
+		vector<string> action;
+		if (currState < 0 && currState >= action_tables.size()) return action;
+		map<string, vector<string>>::iterator iter = action_tables[currState].find();
+	}
+
+
+
+	void testReader()
+	{
+		for (int i = 0; i < grammar_rules.size(); i++) cout << setw(3) << i << ": ~" << grammar_rules[i] << "~\n";
+		test_action_tables();
+		for (int i = 0; i < goto_tables.size(); i++) cout << setw(3) << i << ":: ^" << goto_tables[i] << "^\n";
 	}
 
 	void test_action_tables()
@@ -264,13 +266,6 @@ public:
 		}
 	}
 
-	void testReader()
-	{
-		for (int i = 0; i < grammar_rules.size(); i++) cout << setw(3) << i << ": ~" << grammar_rules[i] << "~\n";
-		test_action_tables();
-		for (int i = 0; i < goto_tables.size(); i++) cout << setw(3) << i << ":: ^" << goto_tables[i] << "^\n";
-	}
-
 	void testTerminals()
 	{
 		cout << "Terminals size: " << terminals.size() << endl;
@@ -278,7 +273,7 @@ public:
 		{
 			cout << "terminal: ";
 			cout << setw(5) << it.getSyntax() << " ";
-			cout << setw(15) << it.getToken().toString() << " ";
+			cout << setw(15) << it.getToken().getSToken() << " ";
 			cout << setw(3) << it.getCharIdx() << " ";
 			cout << setw(3) << it.getLineIdx() << "\n";
 		}
@@ -289,7 +284,7 @@ public:
 	{
 		for_each(tokenBuilders.begin(), tokenBuilders.end(), [](auto it) {
 			cout << "< regExp: " << it.first;
-			cout << ", Token: " << (it.second)("+").toString();
+			cout << ", Token: " << (it.second)("+").getSToken();
 			cout << " >\n";
 		});
 	}
@@ -341,3 +336,4 @@ public:
 
 	*/
 };
+

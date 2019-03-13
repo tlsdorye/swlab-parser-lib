@@ -1,32 +1,34 @@
 #include "Token.h"
 
-map<string, string> Token::tokenmap =
+map<string, EToken> CheckToken =
 {
-	{"_", "EMPTY_SPACE"}, {"(", "OPEN_PAREN"},
-	{")", "CLOSE_PAREN"}, {"identifier", "IDENTIFIER"},
-	{"integer_number", "INTEGER_NUMBER"}, {"+", "ADD"},
-	{"-", "SUB"}, {"*", "MUL"}, {"/", "DIV"}, 
-	{"=", "EQ"}, {";", "SEMICOLON"}
+	{ "_", EToken::EMPTY_EPACE },{ "(", EToken::OPEN_PAREN },
+	{ ")", EToken::CLOSE_PAREN },{ "identifier", EToken::IDENTIFIER },
+	{ "integer_number", EToken::INTEGER_NUMBER },{ "+", EToken::ADD },
+	{ "-", EToken::SUB },{ "*", EToken::MUL },{ "/", EToken::DIV },
+	{ "=", EToken::EQ },{ ";", EToken::SEMICOLON }
 };
 
-Token::Token() 
+Token::Token()
 {
 
 }
 
-Token::Token(string s)
+Token::Token(string sToken, EToken eToken)
 {
-	strToken = s;
+	map<string, EToken>::iterator it = CheckToken.find(sToken);
+	if (it == CheckToken.end()) throw TokenException("Invalid string Token\n");
+	else if (eToken != it->second) throw TokenException("Enum Token does not match string Token\n");
+	this->eToken = eToken;
+	this->sToken = sToken;
 }
 
-bool Token::checkToken(string s)
+EToken Token::getEToken()
 {
-	map<string, string>::iterator it = tokenmap.find(s);
-	if (it != tokenmap.end() && it->second == strToken) return true;
-	return false;
+	return this->eToken;
 }
 
-string Token::toString()
+string Token::getSToken()
 {
-	return strToken;
+	return this->sToken;
 }

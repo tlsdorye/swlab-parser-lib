@@ -3,13 +3,13 @@ using namespace std;
 
 void printToken(Token tok)
 {
-	cout << "printToken: " << tok.toString() << endl;
+	cout << "printToken: " << tok.getSToken() << endl;
 }
 
 void printTerminal(Terminal<Token> term)
 {
 	cout << "printTerminal: [";
-	cout << term.getSyntax() << ", " << term.getToken().toString() << ", ";
+	cout << term.getSyntax() << ", " << term.getToken().getSToken() << ", ";
 	cout << term.getCharIdx() << ", " << term.getLineIdx() << " ]\n";
 }
 

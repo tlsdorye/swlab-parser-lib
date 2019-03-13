@@ -146,7 +146,6 @@
     <ClInclude Include="ParseState.h" />
     <ClInclude Include="Terminal.h" />
     <ClInclude Include="Token.h" />
-    <ClInclude Include="TokenInterface.h" />
     <ClInclude Include="Var.h" />
   </ItemGroup>
   <ItemGroup>

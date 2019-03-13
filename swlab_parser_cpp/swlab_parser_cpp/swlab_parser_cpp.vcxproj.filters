@@ -122,9 +122,6 @@
     <ClInclude Include="ParseState.h">
       <Filter>헤더 파일\parserlib</Filter>
     </ClInclude>
-    <ClInclude Include="TokenInterface.h">
-      <Filter>헤더 파일\parserlib</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="multiline.txt">

@@ -1,16 +1,48 @@
 #pragma once
-#include "TokenInterface.h"
 #include <map>
+#include <string>
+#include <iostream>
 using namespace std;
 
-class Token : public TokenInterface
+enum class EToken
+{
+	EMPTY_EPACE,
+	OPEN_PAREN,
+	CLOSE_PAREN,
+	IDENTIFIER,
+	INTEGER_NUMBER,
+	ADD,
+	SUB,
+	MUL,
+	DIV,
+	EQ,
+	SEMICOLON
+};
+
+class TokenException
 {
 private:
-	static map<string, string> tokenmap;
-	string strToken;
+	string error_message;
+public:
+	TokenException() {};
+	TokenException(string s)
+	{
+		error_message = s;
+	}
+	void printerror()
+	{
+		cout << error_message;
+	}
+};
+
+class Token
+{
+private:
+	EToken eToken;
+	string sToken;
 public:
 	Token();
-	Token(string s);
-	bool checkToken(string s);
-	string toString();
+	Token(string sToken, EToken eToken);
+	EToken getEToken();
+	string getSToken();
 };
