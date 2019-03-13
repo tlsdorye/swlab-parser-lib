@@ -30,9 +30,9 @@ private:
 	map<string, function<CONT<AST>()>> treeBuilders;
 	list<Terminal<TOKEN>> terminals;
 	
-	vector<map<string, vector<string>>> action_tables;
-	vector<string> goto_tables;
-	vector<string> grammar_rules;
+	vector<map<string, vector<string>>> action_table;
+	vector<map<string, vector<string>>> goto_table;
+	vector<string> grammar_table;
 
 	int grammar_rule_index;
 
@@ -46,9 +46,9 @@ public:
 	}
 
 	// function < return-type (parameter)> functor
-	void lex(string regExp, function<TOKEN(string)> func) 
+	void lex(string regExp, function<TOKEN(string)> func)
 	{
-		tokenBuilders[regExp] = func;
+		tokenBuilders.insert({ regExp, func });
 	}
 
 	void lexing(const vector<string> &filepaths)
@@ -129,7 +129,7 @@ public:
 
 	CONT<AST> get(int idx)
 	{
-		string productionRule = grammar_rules[grammar_rule_index];
+		string productionRule = grammar_table[grammar_rule_index];
 		vector<string> splitRule = split_line(productionRule, "([^\t ]+)");
 		int length = splitRule.size() - 2;
 		int last_stack_tree_index = parse_stack.size() - 1;
@@ -151,7 +151,7 @@ public:
 
 	void rule(string productionRule, function<CONT<AST>()> func)
 	{
-		treeBuilders[productionRule] = func;
+		treeBuilders.insert({ productionRule, func });
 	}
 
 	void parsing(const vector<string> filepaths)
@@ -160,20 +160,19 @@ public:
 		lexing(filepaths);
 
 		parse_stack = deque<StackElement*>();
-		
-		parse_stack.push_back(&ParseState("0")); // <= 예외걸림
-		//int x = dynamic_cast<ParseState*>(parse_stack.back())->getState();
-		
-		/*
-		while (!terminals.empty())
-		{
-			ParseState* currState = dynamic_cast<ParseState*>(parse_stack.back());
-			Terminal<TOKEN> currTerminal = terminals.front();
+		parse_stack.push_back(new ParseState("0"));
 
-			list<string> data_arr;
-			string order = data_arr.front();
+		int y = 1;
+
+		//while (!terminals.empty())
+		while(y--)
+		{
+			string str_state = dynamic_cast<ParseState*>(parse_stack.back())->getState();
+			Terminal<TOKEN> currTerminal = terminals.front();
+			vector<string> action = getAction(stoi(str_state), currTerminal);
+			for (auto it : action) cout << it << " ";
+			cout << endl;
 		}
-		*/
 
 	}
 
@@ -184,21 +183,21 @@ public:
 		ifstream gotoReader("goto_table.txt");
 
 		string line;
-		grammar_rules.clear(); // capacity는 그대로
-		action_tables.clear();
-		goto_tables.clear();
+		grammar_table.clear(); // capacity는 그대로
+		action_table.clear();
+		goto_table.clear();
 
 		if (grammarReader.is_open())
 		{
 			while (getline(grammarReader, line))
 			{
 				vector<string> words = split_line(line, "([0-9]+)(?:. )([^\n]+)");
-				if (words.size() < 2 || grammar_rules.size() != stoi(words[0]))
+				if (words.size() < 2 || grammar_table.size() != stoi(words[0]))
 				{
 					printerror("error: grammar_rule split");
 					return;
 				}
-				grammar_rules.push_back(words[1]);
+				grammar_table.push_back(words[1]);
 			}
 		}
 		else
@@ -213,8 +212,8 @@ public:
 			{
 				vector<string> tokens = split_line(line, "([^\t ]+)");
 				int state = stoi(tokens[0]);
-				if (action_tables.size() <= state) action_tables.push_back(map<string, vector<string>>());
-				for (int i = 2; i < tokens.size(); i++) action_tables[state][tokens[1]].push_back(tokens[i]);
+				if (action_table.size() <= state) action_table.push_back(map<string, vector<string>>());
+				for (int i = 2; i < tokens.size(); i++) action_table[state][tokens[1]].push_back(tokens[i]);
 			}
 		}
 			
@@ -224,8 +223,8 @@ public:
 			return;
 		}
 
-		if (gotoReader.is_open()) 
-			while (getline(gotoReader, line)) goto_tables.push_back(line);
+		if (gotoReader.is_open())
+			while (getline(gotoReader, line)); //goto_table.push_back(line);
 		else
 		{
 			"error: gotoReader is not open\n";
@@ -236,27 +235,32 @@ public:
 		//testReader();
 	}
 
-	vector<string> check_state(ParseState currState, Terminal<TOKEN> term)
+	vector<string> getAction(int& int_state, Terminal<TOKEN>& term)
 	{
+		//int int_state = stoi(currState);
 		vector<string> action;
-		if (currState < 0 && currState >= action_tables.size()) return action;
-		map<string, vector<string>>::iterator iter = action_tables[currState].find();
+		if (int_state < 0 && int_state >= action_table.size()) return action; // error: out of range at action_table
+		map<string, vector<string>>::iterator it = action_table[int_state].find(term.getToken().getSToken());
+		if (it == action_table[int_state].end()) return action; // error: Nothing find at action_table[int_state]
+		return it->second;
+
+		return action;
 	}
 
 
 
 	void testReader()
 	{
-		for (int i = 0; i < grammar_rules.size(); i++) cout << setw(3) << i << ": ~" << grammar_rules[i] << "~\n";
+		for (int i = 0; i < grammar_table.size(); i++) cout << setw(3) << i << ": ~" << grammar_table[i] << "~\n";
 		test_action_tables();
-		for (int i = 0; i < goto_tables.size(); i++) cout << setw(3) << i << ":: ^" << goto_tables[i] << "^\n";
+		for (int i = 0; i < goto_table.size(); i++) cout << setw(3) << i << ":: ^" << goto_table[i] << "^\n";
 	}
 
 	void test_action_tables()
 	{
-		for (int i = 0; i < action_tables.size(); i++)
+		for (int i = 0; i < action_table.size(); i++)
 		{
-			for (auto it : action_tables[i])
+			for (auto it : action_table[i])
 			{
 				cout << setw(3) << i << ": ";
 				cout << setw(15) << it.first << " => [";

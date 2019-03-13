@@ -33,4 +33,8 @@ int main()
 	Parser P;
 	P.parsing(filepaths);
 	//P.testCommonParserUtil_TreeBuilder();
+	//ParseState* ps = new ParseState("0");
+	//StackElement* elem = dynamic_cast<StackElement*>(ps);
+	//ParseState* p = dynamic_cast<ParseState*>(elem);
+	//cout << p->getState();
 }
