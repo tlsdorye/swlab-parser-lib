@@ -3,41 +3,23 @@ using namespace std;
 
 void printToken(Token tok)
 {
-	cout << "printToken: " << tok.getSToken() << endl;
+	cout << "printToken: " << tok.get_str_token() << endl;
 }
 
 void printTerminal(Terminal<Token> term)
 {
 	cout << "printTerminal: [";
-	cout << term.getSyntax() << ", " << term.getToken().getSToken() << ", ";
+	cout << term.getSyntax() << ", " << term.getToken().get_str_token() << ", ";
 	cout << term.getCharIdx() << ", " << term.getLineIdx() << " ]\n";
 }
 
 int main()
 {
-
-	//Token T(Token::END_OF_TOKEN);
-	//Terminal<Token> Term("syn-tax", T, 1, 2);
-
-	//printToken(T);
-	//printTerminal(Term);
-
-	//CommonParserUtil<Token, Expr, vector> pu;
-	//Lexer lexer(pu);
-	//pu.testTokenBuilder();
-
 	vector<string> filepaths;
-	//filepaths.push_back("oneline.txt");
-	filepaths.push_back("multiline.txt");
+	filepaths.push_back("oneline.txt");
 	//filepaths.push_back("multiline.txt");
-	//pu.lexing(filepaths);
-	//pu.testTerminals();
+
 	Parser P;
-	vector<Expr*> exprSeq = P.parsing(filepaths);
-	for (auto it : exprSeq) cout << "tree: " << it->toString() << endl;
-	//P.testCommonParserUtil_TreeBuilder();
-	//ParseState* ps = new ParseState("0");
-	//StackElement* elem = dynamic_cast<StackElement*>(ps);
-	//ParseState* p = dynamic_cast<ParseState*>(elem);
-	//cout << p->getState();
+	vector<Expr*> exprSeq = P.Parsing(filepaths);
+	for (auto it : exprSeq) cout << "parsing result: " << it->toString() << endl;
 }

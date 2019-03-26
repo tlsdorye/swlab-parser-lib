@@ -4,10 +4,10 @@
 class Var : public Expr
 {
 private:
-	string varName;
+	string var_name;
 public:
-	Var(string varName);
-	string getVarName();
+	Var(string var_name);
+	string get_var_name();
 	string toString();
 };
 

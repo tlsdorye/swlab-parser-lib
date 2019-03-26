@@ -1,6 +1,6 @@
 #include "Token.h"
 
-map<string, EToken> CheckToken =
+map<string, EToken> str_to_enum_token =
 {
 	{"$", EToken::END_OF_TOKEN },
 	{ "_", EToken::EMPTY_EPACE },{ "(", EToken::OPEN_PAREN },
@@ -17,19 +17,19 @@ Token::Token()
 
 Token::Token(string sToken, EToken eToken)
 {
-	map<string, EToken>::iterator it = CheckToken.find(sToken);
-	if (it == CheckToken.end()) throw TokenException("Invalid string Token\n");
+	map<string, EToken>::iterator it = str_to_enum_token.find(sToken);
+	if (it == str_to_enum_token.end()) throw TokenException("Invalid string Token\n");
 	else if (eToken != it->second) throw TokenException("Enum Token does not match string Token\n");
-	this->eToken = eToken;
-	this->sToken = sToken;
+	this->enum_token = eToken;
+	this->str_token = sToken;
 }
 
-EToken Token::getEToken()
+EToken Token::get_enum_token()
 {
-	return this->eToken;
+	return this->enum_token;
 }
 
-string Token::getSToken()
+string Token::get_str_token()
 {
-	return this->sToken;
+	return this->str_token;
 }

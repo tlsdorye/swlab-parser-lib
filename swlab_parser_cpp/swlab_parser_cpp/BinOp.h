@@ -11,16 +11,15 @@ enum class OpKind {
 class BinOp : public Expr
 {
 private:
-	Expr* left;
-	Expr* right;
+	Expr* left, *right;
 protected:
 	OpKind op;
 public:
 	BinOp(OpKind op, Expr* left, Expr* right);
-	OpKind getOpKind();
-	Expr* getRight();
-	Expr* getLeft();
-	string getStrOpKind(OpKind opkind);
+	OpKind get_op();
+	Expr* get_right();
+	Expr* get_left();
+	string get_str_op(OpKind opkind);
 	string toString();
 };
 

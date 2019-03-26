@@ -7,9 +7,6 @@ class Expr
 public:
 	string type;
 	Expr() {}
-	virtual string toString()
-	{
-		return type;
-	}
+	virtual string toString() = 0;
 };
 

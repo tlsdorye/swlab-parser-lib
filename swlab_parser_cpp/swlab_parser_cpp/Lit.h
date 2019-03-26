@@ -4,10 +4,10 @@
 class Lit : public Expr
 {
 private:
-	int integerLit;
+	int integer_value;
 public:
 	Lit(int i);
-	int getInteger();
+	int get_integer_value();
 	string toString();
 };
 

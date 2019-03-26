@@ -8,22 +8,21 @@ template<typename AST,
 class Nonterminal : public StackElement
 {
 private:
-	CONTAINER<AST*> tree;
-	//Object tree
+	CONTAINER<AST*> trees;
 public:
-	Nonterminal(CONTAINER<AST*> tree)
+	Nonterminal(CONTAINER<AST*> trees)
 	{
-		this->tree = tree;
+		this->trees = trees;
 	}
 
-	CONTAINER<AST*> getTree()
+	CONTAINER<AST*> getTrees()
 	{
-		return tree;
+		return trees;
 	}
 
-	void setTree(CONTAINER<AST*> tree)
+	void setTrees(CONTAINER<AST*> trees)
 	{
-		this->tree = tree;
+		this->trees = trees;
 	}
 
 	string toString()

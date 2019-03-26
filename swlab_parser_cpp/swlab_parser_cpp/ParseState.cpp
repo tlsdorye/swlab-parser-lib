@@ -9,12 +9,12 @@ ParseState::ParseState(string state)
 	this->state = state;
 }
 
-string ParseState::getState()
+string ParseState::get_state()
 {
 	return state;
 }
 
-void ParseState::setState(string state)
+void ParseState::set_state(string state)
 {
 	this->state = state;
 }

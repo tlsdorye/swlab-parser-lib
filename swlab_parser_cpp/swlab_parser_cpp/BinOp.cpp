@@ -8,22 +8,22 @@ BinOp::BinOp(OpKind op, Expr* left, Expr* right)
 	this->type = "BinOp";
 }
 
-OpKind BinOp::getOpKind()
+OpKind BinOp::get_op()
 {
 	return op;
 }
 
-Expr* BinOp::getRight()
+Expr* BinOp::get_right()
 {
 	return right;
 }
 
-Expr* BinOp::getLeft()
+Expr* BinOp::get_left()
 {
 	return left;
 }
 
-string BinOp::getStrOpKind(OpKind opkind)
+string BinOp::get_str_op(OpKind opkind)
 {
 	string ret;
 	switch (opkind)
@@ -48,5 +48,6 @@ string BinOp::getStrOpKind(OpKind opkind)
 
 string BinOp::toString()
 {
-	return string("BinOp(" + getStrOpKind(op) + "," + left->toString() + "," + right->toString() + ")");
+	string ret("(" + left->toString() + " " + get_str_op(op) + " " + right->toString() + ")");
+	return ret;
 }

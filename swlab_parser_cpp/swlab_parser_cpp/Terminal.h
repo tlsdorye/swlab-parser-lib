@@ -7,16 +7,16 @@ class Terminal : public StackElement
 {
 private:
 	string syntax;
-	TOKEN tok;
-	int charIdx;
-	int lineIdx;
+	TOKEN token;
+	int char_idx;
+	int line_idx;
 public:
-	Terminal(string syntax, TOKEN tok, int charIdx, int lineIdx)
+	Terminal(string syntax, TOKEN tok, int char_idx, int line_idx)
 	{
 		this->syntax = syntax;
-		this->tok = tok;
-		this->charIdx = charIdx;
-		this->lineIdx = lineIdx;
+		this->token = tok;
+		this->char_idx = char_idx;
+		this->line_idx = line_idx;
 	}
 
 	string getSyntax()
@@ -31,37 +31,37 @@ public:
 
 	TOKEN getToken()
 	{
-		return tok;
+		return token;
 	}
 
-	void setToken(TOKEN tok)
+	void setToken(TOKEN token)
 	{
-		this->tok = tok;
+		this->token = token;
 	}
 
 	int getCharIdx()
 	{
-		return charIdx;
+		return char_idx;
 	}
 
-	void setCharIdx(int charIdx)
+	void setCharIdx(int char_idx)
 	{
-		this->charIdx = charIdx;
+		this->char_idx = char_idx;
 	}
 
 	int getLineIdx()
 	{
-		return lineIdx;
+		return line_idx;
 	}
 
-	void setLineIdx(int lineIdx)
+	void setLineIdx(int line_idx)
 	{
-		this->lineIdx = lineIdx;
+		this->line_idx = line_idx;
 	}
 
 	string toString()
 	{
-		return tok.getSToken();
+		return token.get_str_token();
 	}
 };
 

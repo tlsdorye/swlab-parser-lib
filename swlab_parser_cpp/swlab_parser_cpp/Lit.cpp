@@ -4,16 +4,17 @@ using namespace std;
 
 Lit::Lit(int i)
 {
-	this->integerLit = i;
+	this->integer_value = i;
 	this->type = "Lit";
 }
 
-int Lit::getInteger()
+int Lit::get_integer_value()
 {
-	return integerLit;
+	return integer_value;
 }
 
 string Lit::toString()
 {
-	return string("Lit(" + to_string(integerLit) + ")");
+	string ret("(" + to_string(integer_value) + ")");
+	return ret;
 }

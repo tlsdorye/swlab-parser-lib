@@ -39,11 +39,11 @@ public:
 class Token
 {
 private:
-	EToken eToken;
-	string sToken;
+	EToken enum_token;
+	string str_token;
 public:
 	Token();
-	Token(string sToken, EToken eToken);
-	EToken getEToken();
-	string getSToken();
+	Token(string str_token, EToken enum_token);
+	EToken get_enum_token();
+	string get_str_token();
 };

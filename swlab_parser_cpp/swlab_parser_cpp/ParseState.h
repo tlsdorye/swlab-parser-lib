@@ -10,8 +10,8 @@ private:
 public:
 	ParseState();
 	ParseState(string state);
-	string getState();
-	void setState(string state);
+	string get_state();
+	void set_state(string state);
 	string toString();
 };
 

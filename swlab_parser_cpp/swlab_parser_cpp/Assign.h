@@ -4,12 +4,12 @@
 class Assign : public Expr
 {
 private:
-	string varName;
+	string var_name;
 	Expr* rhs;
 public:
-	Assign(string varName, Expr* rhs);
-	string getVarName();
-	Expr* getRhs();
+	Assign(string var_name, Expr* rhs);
+	string get_var_name();
+	Expr* get_rhs();
 	string toString();
 };
 

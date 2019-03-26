@@ -1,18 +1,19 @@
 #include "Var.h"
 
-Var::Var(string varName)
+Var::Var(string var_name)
 {
-	this->varName = varName;
+	this->var_name = var_name;
 	this->type = "Var";
 }
 
-string Var::getVarName()
+string Var::get_var_name()
 {
-	return varName;
+	return var_name;
 }
 
 
 string Var::toString()
 {
-	return string("Var(" + varName +")");
+	string ret("(" + var_name + ")");
+	return ret;
 }

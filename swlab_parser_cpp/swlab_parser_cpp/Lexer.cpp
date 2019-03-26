@@ -1,20 +1,19 @@
 #include "Lexer.h"
 
-Lexer::Lexer(CommonParserUtil<Token, Expr, vector> &pu)
+Lexer::Lexer(CommonParserUtil<Token, Expr, vector> &parser_util)
 {
-	//pu.lexEndToken(Token::END_OF_TOKEN);
-	pu.LexEndOfToken(Token("$", EToken::END_OF_TOKEN));
-	pu.Lex("[ \t\n]", [](string text)->Token {return Token("_", EToken::EMPTY_EPACE); });
-	pu.Lex("[0-9]+", [](string text)->Token {return Token("integer_number", EToken::INTEGER_NUMBER); });
-	pu.Lex("\\(", [](string text)->Token {return Token("(", EToken::OPEN_PAREN); });
-	pu.Lex("\\)", [](string text)->Token {return Token(")", EToken::CLOSE_PAREN); });
-	pu.Lex("\\+", [](string text)->Token {return Token("+", EToken::ADD); });
-	pu.Lex("\\-", [](string text)->Token {return Token("-", EToken::SUB); });
-	pu.Lex("\\*", [](string text)->Token {return Token("*", EToken::MUL); });
-	pu.Lex("\\/", [](string text)->Token {return Token("/", EToken::DIV); });
-	pu.Lex("\\=", [](string text)->Token {return Token("=", EToken::EQ); });
-	pu.Lex("\\;", [](string text)->Token {return Token(";", EToken::SEMICOLON); });
-	pu.Lex("[a-zA-Z]+[a-zA-Z0-9]*", [](string text)->Token {return Token("identifier", EToken::IDENTIFIER); });
+	parser_util.LexEndOfToken(Token("$", EToken::END_OF_TOKEN));
+	parser_util.AddTokenLambda("[ \t\n]", [](string text)->Token {return Token("_", EToken::EMPTY_EPACE); });
+	parser_util.AddTokenLambda("[0-9]+", [](string text)->Token {return Token("integer_number", EToken::INTEGER_NUMBER); });
+	parser_util.AddTokenLambda("\\(", [](string text)->Token {return Token("(", EToken::OPEN_PAREN); });
+	parser_util.AddTokenLambda("\\)", [](string text)->Token {return Token(")", EToken::CLOSE_PAREN); });
+	parser_util.AddTokenLambda("\\+", [](string text)->Token {return Token("+", EToken::ADD); });
+	parser_util.AddTokenLambda("\\-", [](string text)->Token {return Token("-", EToken::SUB); });
+	parser_util.AddTokenLambda("\\*", [](string text)->Token {return Token("*", EToken::MUL); });
+	parser_util.AddTokenLambda("\\/", [](string text)->Token {return Token("/", EToken::DIV); });
+	parser_util.AddTokenLambda("\\=", [](string text)->Token {return Token("=", EToken::EQ); });
+	parser_util.AddTokenLambda("\\;", [](string text)->Token {return Token(";", EToken::SEMICOLON); });
+	parser_util.AddTokenLambda("[a-zA-Z]+[a-zA-Z0-9]*", [](string text)->Token {return Token("identifier", EToken::IDENTIFIER); });
 }
 
 // cpp lambda: [introducer](parameter) ->return-type { statement };

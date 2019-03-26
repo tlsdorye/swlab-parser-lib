@@ -1,23 +1,24 @@
 #include "Assign.h"
 
-Assign::Assign(string varName, Expr* rhs)
+Assign::Assign(string var_name, Expr* rhs)
 {
-	this->varName = varName;
+	this->var_name = var_name;
 	this->rhs = rhs;
 	this->type = "Assign";
 }
 
-string Assign::getVarName()
+string Assign::get_var_name()
 {
-	return varName;
+	return var_name;
 }
 
-Expr* Assign::getRhs()
+Expr* Assign::get_rhs()
 {
 	return rhs;
 }
 
 string Assign::toString()
 {
-	return string("Assign(" + varName + "," + rhs->toString() + ")");
+	string ret("(" + var_name + "=" + rhs->toString() + ")");
+	return ret;
 }

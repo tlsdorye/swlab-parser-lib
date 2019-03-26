@@ -13,10 +13,9 @@ using namespace std;
 class Parser
 {
 private:
-	CommonParserUtil<Token, Expr, vector> pu;
+	CommonParserUtil<Token, Expr, vector> parser_util;
 public:
 	Parser();
-	vector<Expr*> parsing(vector<string> filepaths);
-	void lexing(vector<string> filepaths);
-	void testCommonParserUtil_TreeBuilder();
+	vector<Expr*> Parsing(vector<string> filepaths);
+	void Lexing(vector<string> filepaths);
 };
