@@ -11,6 +11,7 @@
 #include <queue>
 #include <deque>
 #include <map>
+#include <set>
 #include <regex>
 #include <utility>
 #include <algorithm>
@@ -163,6 +164,8 @@ public:
 		LoadAutomaton();
 		Lexing(filepaths);
 
+		CreateAutomaton();
+
 		parse_stack = deque<StackElement*>();
 		parse_stack.push_back(new ParseState("0")); // ¹Ýµå½Ã delete
 
@@ -300,6 +303,26 @@ public:
 		return it->second;
 	}
 
+	void CreateAutomaton()
+	{
+		vector<string> grammar_rules;
+		for (auto it : grammar_to_trees) grammar_rules.push_back(it.first);
+
+		set<string> nonterminals;
+		vector<vector<string>> grammar_rule_split;
+		for (auto grammar : grammar_rules) grammar_rule_split.push_back(SplitLine(grammar, "([^\t ]+)"));
+		//
+		for (auto it : grammar_rule_split) {
+			for (auto its : it) {
+				cout << its << ", ";
+			}
+			cout << endl;
+		}
+		//
+		for (auto it : grammar_rule_split) nonterminals.insert(it[0]);
+
+	}
+
 	void test_grammar_table() 
 	{
 		for (int i = 0; i < grammar_table.size(); i++)
@@ -355,7 +378,7 @@ public:
 		});
 	}
 
-	void testTreeBuilders()
+	void test_grammar_to_trees()
 	{
 		cout << "treeBuilder size: " << grammar_to_trees.size() << endl;
 		for_each(grammar_to_trees.begin(), grammar_to_trees.end(), [](auto it) {
@@ -373,33 +396,5 @@ public:
 		cout << error_message << endl;
 		return;
 	}
-
-	/*
-
-	vector<string> split(string line, const string &delimiter)
-	{
-		vector<string> tokens;
-		string token;
-		size_t pos;
-		while ((pos = line.find(delimiter)) != string::npos)
-		{
-			token = line.substr(0, pos);
-			trim(token);
-			tokens.push_back(token);
-			line.erase(0, pos + delimiter.length());
-		}
-		trim(line);
-		tokens.push_back(line);
-		return tokens;
-	}
-
-	string &trim(std::string &s) 
-	{
-		s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
-		s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
-		return s;
-	}
-
-	*/
 };
 

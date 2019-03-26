@@ -16,8 +16,8 @@ void printTerminal(Terminal<Token> term)
 int main()
 {
 	vector<string> filepaths;
-	filepaths.push_back("oneline.txt");
-	//filepaths.push_back("multiline.txt");
+	//filepaths.push_back("oneline.txt");
+	filepaths.push_back("multiline.txt");
 
 	Parser P;
 	vector<Expr*> exprSeq = P.Parsing(filepaths);
