@@ -12,6 +12,6 @@ public:
 	ParseState(string state);
 	string getState();
 	void setState(string state);
-	void toString();
+	string toString();
 };
 

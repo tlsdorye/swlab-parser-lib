@@ -5,11 +5,11 @@ class Assign : public Expr
 {
 private:
 	string varName;
-	Expr rhs;
+	Expr* rhs;
 public:
-	Assign(string varName, Expr rhs);
+	Assign(string varName, Expr* rhs);
 	string getVarName();
-	Expr getRhs();
+	Expr* getRhs();
 	string toString();
 };
 

@@ -16,7 +16,7 @@ private:
 	CommonParserUtil<Token, Expr, vector> pu;
 public:
 	Parser();
-	void parsing(vector<string> filepaths);
+	vector<Expr*> parsing(vector<string> filepaths);
 	void lexing(vector<string> filepaths);
 	void testCommonParserUtil_TreeBuilder();
 };

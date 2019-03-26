@@ -15,6 +15,7 @@ void printTerminal(Terminal<Token> term)
 
 int main()
 {
+
 	//Token T(Token::END_OF_TOKEN);
 	//Terminal<Token> Term("syn-tax", T, 1, 2);
 
@@ -26,12 +27,14 @@ int main()
 	//pu.testTokenBuilder();
 
 	vector<string> filepaths;
-	filepaths.push_back("oneline.txt");
+	//filepaths.push_back("oneline.txt");
+	filepaths.push_back("multiline.txt");
 	//filepaths.push_back("multiline.txt");
 	//pu.lexing(filepaths);
 	//pu.testTerminals();
-	//Parser P;
-	//P.parsing(filepaths);
+	Parser P;
+	vector<Expr*> exprSeq = P.parsing(filepaths);
+	for (auto it : exprSeq) cout << "tree: " << it->toString() << endl;
 	//P.testCommonParserUtil_TreeBuilder();
 	//ParseState* ps = new ParseState("0");
 	//StackElement* elem = dynamic_cast<StackElement*>(ps);

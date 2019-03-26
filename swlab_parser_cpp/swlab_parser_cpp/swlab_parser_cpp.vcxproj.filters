@@ -57,9 +57,6 @@
     <ClCompile Include="Lit.cpp">
       <Filter>소스 파일\example\arith\ast</Filter>
     </ClCompile>
-    <ClCompile Include="Expr.cpp">
-      <Filter>소스 파일\example\arith\ast</Filter>
-    </ClCompile>
     <ClCompile Include="BinOp.cpp">
       <Filter>소스 파일\example\arith\ast</Filter>
     </ClCompile>

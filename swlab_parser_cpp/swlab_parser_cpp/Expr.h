@@ -5,7 +5,11 @@ using namespace std;
 class Expr
 {
 public:
-	Expr();
-	virtual string toString();
+	string type;
+	Expr() {}
+	virtual string toString()
+	{
+		return type;
+	}
 };
 

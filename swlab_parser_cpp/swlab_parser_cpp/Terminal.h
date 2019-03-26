@@ -59,9 +59,9 @@ public:
 		this->lineIdx = lineIdx;
 	}
 
-	void toString()
+	string toString()
 	{
-
+		return tok.getSToken();
 	}
 };
 

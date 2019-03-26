@@ -19,7 +19,7 @@ void ParseState::setState(string state)
 	this->state = state;
 }
 
-void ParseState::toString()
+string ParseState::toString()
 {
-	
+	return state;
 }

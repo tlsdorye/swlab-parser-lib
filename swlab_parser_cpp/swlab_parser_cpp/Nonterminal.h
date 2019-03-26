@@ -4,30 +4,30 @@
 using namespace std;
 
 template<typename AST, 
-	template<typename ELEM, typename = allocator<ELEM>> class CONT>
+	template<typename ELEM, typename = allocator<ELEM>> class CONTAINER>
 class Nonterminal : public StackElement
 {
 private:
-	CONT<AST> tree;
+	CONTAINER<AST*> tree;
 	//Object tree
 public:
-	Nonterminal(CONT<AST> tree)
+	Nonterminal(CONTAINER<AST*> tree)
 	{
 		this->tree = tree;
 	}
 
-	CONT<AST> getTree()
+	CONTAINER<AST*> getTree()
 	{
 		return tree;
 	}
 
-	void setTree(CONT<AST> tree)
+	void setTree(CONTAINER<AST*> tree)
 	{
 		this->tree = tree;
 	}
 
-	void toString()
+	string toString()
 	{
-
+		return "Nonterminal";
 	}
 };

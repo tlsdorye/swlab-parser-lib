@@ -1,4 +1,5 @@
 #pragma once
+#include "Nonterminal.h"
 #include "Terminal.h"
 #include "ParseState.h"
 #include <iostream>
@@ -9,6 +10,7 @@
 #include <map> // test용
 #include <vector>
 #include <stack>
+#include <queue>
 #include <deque>
 #include <array>
 #include <regex>
@@ -21,25 +23,25 @@
 using namespace std;
 
 template <typename TOKEN, typename AST, 
-	template<typename ELEM, typename = allocator<ELEM>> class CONT>
+	template<typename ELEM, typename = allocator<ELEM>> class CONTAINER>
 class CommonParserUtil
 {
 	//static_assert(is_base_of<TokenInterface, TOKEN>::value, "TOKEN muse inherit from TokenInterface");
 private:
-	map<string, function<TOKEN(string)>> tokenBuilders;
-	map<string, function<CONT<AST>()>> treeBuilders;
-	list<Terminal<TOKEN>> terminals;
+	map<string, function<TOKEN(string)>> regex_to_token_by_lambda;
+	map<string, function<CONTAINER<AST*>()>> grammar_to_trees_by_lambda;
 	
 	vector<map<string, vector<string>>> action_table;
-	vector<map<string, vector<string>>> goto_table;
-	vector<string> grammar_table;
-	map<string, int> hash_code;
-	
-	int grammar_rule_index;
+	map<pair<string, string>, string> goto_table;
+	vector<vector<string>> grammar_table;
+
+	list<Terminal<TOKEN>> terminal_list; // -> queue로 바꿔도 좋을듯
 
 	deque<StackElement*> parse_stack;
-	string startSymbol;
+	string start_symbol;
+	int curr_grammar_index;
 
+	TOKEN end_of_token;
 public:
 	CommonParserUtil()
 	{
@@ -47,12 +49,17 @@ public:
 	}
 
 	// function < return-type (parameter)> functor
-	void lex(string regExp, function<TOKEN(string)> func)
+	void Lex(string regExp, function<TOKEN(string)> func)
 	{
-		tokenBuilders.insert({ regExp, func });
+		regex_to_token_by_lambda.insert({ regExp, func });
 	}
 
-	void lexing(const vector<string> &filepaths)
+	void LexEndOfToken(TOKEN tok)
+	{
+		end_of_token = tok;
+	}
+	
+	void Lexing(const vector<string> &filepaths)
 	{
 		for (auto it : filepaths)
 		{
@@ -63,7 +70,7 @@ public:
 				string line;
 
 				while (getline(reader, line)) lines.push_back(line);
-				for (int i = 0; i < lines.size(); i++) matching(lines[i], i + 1);
+				for (int i = 0; i < lines.size(); i++) Matching(lines[i], i + 1);
 			}
 			else
 			{
@@ -71,6 +78,7 @@ public:
 				cout << "error - ifstream\n";
 				return;
 			}
+			terminal_list.push_back(Terminal<TOKEN>(end_of_token.getSToken(), end_of_token, -1, -1));
 		}
 
 		//test
@@ -79,7 +87,7 @@ public:
 	}
 
 	//matching function
-	void matching(string &_line, int lineno)
+	void Matching(string &_line, int lineno)
 	{
 		int charIdx = 0;
 		string line = _line;
@@ -87,7 +95,7 @@ public:
 		while (line != "")
 		{
 			bool matched = false;
-			for (auto it : tokenBuilders)
+			for (auto it : regex_to_token_by_lambda)
 			{
 				regex curr_regex = regex(it.first);
 				
@@ -95,10 +103,8 @@ public:
 				if (regex_search(line, sm, curr_regex) && sm.prefix() == "")
 				{
 					// sm[0]: matched string_token
-					try {
-						terminals.push_back(Terminal<TOKEN>(sm[0], (it.second)(sm[0]), charIdx, lineno));
-					} 
-					catch (TokenException& e) { e.printerror(); };
+					if (it.second(sm[0]).getSToken() != "_")
+						terminal_list.push_back(Terminal<TOKEN>(sm[0], (it.second)(sm[0]), charIdx, lineno));
 					
 					line = sm.suffix();
 					charIdx += sm[0].length();
@@ -114,7 +120,7 @@ public:
 		}
 	}
 
-	vector<string> split_line(string line, string regExp)
+	vector<string> SplitLine(string line, string regExp)
 	{
 		vector<string> tokens;
 		regex reg(regExp);
@@ -128,60 +134,107 @@ public:
 		return tokens;
 	}
 
-	CONT<AST> get(int idx)
+	CONTAINER<AST*> getTree(int idx)
 	{
-		string productionRule = grammar_table[grammar_rule_index];
-		vector<string> splitRule = split_line(productionRule, "([^\t ]+)");
-		int length = splitRule.size() - 2;
-		int last_stack_tree_index = parse_stack.size() - 1;
+		int length = grammar_table[curr_grammar_index].size() - 2;
+		int last_stack_idx = parse_stack.size() - 1;
 		int offset = (length * 2) - ((idx - 1) * 2 + 1);
-		CONT<AST> tree;// = parse_stack[last_stack_tree_index - offset];
-		return tree;
+		if (Nonterminal<AST, CONTAINER>* nt = dynamic_cast<Nonterminal<AST, CONTAINER>*>(parse_stack[last_stack_idx - offset])) {
+			return nt->getTree();
+		}
+		else {
+			printerror("downcasting error - Nonterminal");
+		}
 	}
 
 	string getText(int idx)
 	{
-		string ret;
-		return ret;
+		int length = grammar_table[curr_grammar_index].size() - 2;
+		int last_stack_idx = parse_stack.size() - 1;
+		int offset = (length * 2) - ((idx - 1) * 2 + 1);
+		if (Terminal<TOKEN>* term = dynamic_cast<Terminal<TOKEN>*>(parse_stack[last_stack_idx - offset])) {
+			return term->getSyntax();
+		}
+		else {
+			printerror("downcasting error - Terminal");
+		}
 	}
 
-	void ruleStartSymbol(string startSymbol)
+	void setStartSymbol(string startSymbol)
 	{
-		this->startSymbol = startSymbol;
+		this->start_symbol = startSymbol;
 	}
 
-	void rule(string productionRule, function<CONT<AST>()> func)
+	void rule(string productionRule, function<CONTAINER<AST*>()> func)
 	{
-		treeBuilders.insert({ productionRule, func });
+		grammar_to_trees_by_lambda.insert({ productionRule, func });
 	}
 
-	void parsing(const vector<string> filepaths)
+	CONTAINER<AST*> parsing(const vector<string> filepaths)
 	{
 		readInitialize();
-		lexing(filepaths);
+		Lexing(filepaths);
 
 		parse_stack = deque<StackElement*>();
 		parse_stack.push_back(new ParseState("0")); // 반드시 delete
 
-		int y = 1;
-		//while (!terminals.empty())
-		while(y--)
+		while (!terminal_list.empty())
 		{
-			string str_state = dynamic_cast<ParseState*>(parse_stack.back())->getState();
-			Terminal<TOKEN> currTerminal = terminals.front();
-			vector<string> action = getAction(stoi(str_state), currTerminal);
 			//
-			for (auto it : action) cout << it << " ";
-			cout << endl;
+			//cout << "stack: ";
+			//for (auto it : parse_stack) cout << it->toString() << ", ";
+			//cout << endl;
 			//
-			switch (y)
+			string str_currState = dynamic_cast<ParseState*>(parse_stack.back())->getState();
+			Terminal<TOKEN> currTerminal = terminal_list.front();
+			vector<string> action = getAction(str_currState, currTerminal);
+			//
+			//cout << "state: " << str_currState << endl;
+			//cout << "term : " << currTerminal.getSyntax() << endl;
+			//for (auto it : action) cout << it << " ";
+			//cout << endl;
+			//
+			if (action[0] == "Accept")
 			{
-			case 1:
-				break;
-			case 2:
-				break;
-			default:
-				break;
+				terminal_list.pop_front();
+				Nonterminal<AST, CONTAINER>* nt = dynamic_cast<Nonterminal<AST, CONTAINER>*>(parse_stack[1]);
+				return nt->getTree();
+			}
+			else if (action[0] == "Shift")
+			{
+				parse_stack.push_back(new Terminal<TOKEN>(currTerminal));
+				parse_stack.push_back(new ParseState(action[1]));
+				terminal_list.pop_front();
+			}
+			else if (action[0] == "Reduce")
+			{
+				curr_grammar_index = stoi(action[1]);
+				string lhs = grammar_table[curr_grammar_index][0];
+				vector<string>::iterator rhs_start = grammar_table[curr_grammar_index].begin() + 2;
+				vector<string>::iterator rhs_end = grammar_table[curr_grammar_index].end();
+				vector<string> rhs(rhs_start, rhs_end);
+
+				string grammar_rule;
+				for (auto it : grammar_table[curr_grammar_index]) grammar_rule += it + " ";
+				grammar_rule = grammar_rule.substr(0, grammar_rule.size() - 1);
+				CONTAINER<AST*> tree = grammar_to_trees_by_lambda[grammar_rule]();
+
+				for (int i = 0; i < rhs.size(); i++)
+				{
+					delete parse_stack.back();
+					parse_stack.pop_back();
+					delete parse_stack.back();
+					parse_stack.pop_back();
+				}
+				//
+				//cout << "stack: ";
+				//for (auto it : parse_stack) cout << it->toString() << ", ";
+				//cout << endl;
+				//		
+				str_currState = dynamic_cast<ParseState*>(parse_stack.back())->getState();
+
+				parse_stack.push_back(new Nonterminal<AST, CONTAINER>(tree));
+				parse_stack.push_back(new ParseState(goto_table[{str_currState, lhs}]));
 			}
 		}
 
@@ -202,13 +255,11 @@ public:
 		{
 			while (getline(grammarReader, line))
 			{
-				vector<string> words = split_line(line, "([0-9]+)(?:. )([^\n]+)");
-				if (words.size() < 2 || grammar_table.size() != stoi(words[0]))
-				{
-					printerror("error: grammar_rule split");
-					return;
-				}
-				grammar_table.push_back(words[1]);
+				vector<string> index_split = SplitLine(line, "([0-9]+)(?:. )([^\n]+)");
+				vector<string> grammar_split = SplitLine(index_split[1], "([^\t ]+)");
+				int index = stoi(index_split[0]);
+				while (grammar_table.size() <= index) grammar_table.push_back(vector<string>());
+				grammar_table[index] = grammar_split;
 			}
 		}
 		else
@@ -221,7 +272,7 @@ public:
 		{
 			while (getline(actionReader, line)) //action_tables.push_back(line);
 			{
-				vector<string> tokens = split_line(line, "([^\t ]+)");
+				vector<string> tokens = SplitLine(line, "([^\t ]+)");
 				int state = stoi(tokens[0]);
 				if (action_table.size() <= state) action_table.push_back(map<string, vector<string>>());
 				for (int i = 2; i < tokens.size(); i++) action_table[state][tokens[1]].push_back(tokens[i]);
@@ -235,7 +286,11 @@ public:
 		}
 
 		if (gotoReader.is_open())
-			while (getline(gotoReader, line)); //goto_table.push_back(line);
+			while (getline(gotoReader, line))
+			{
+				vector<string> tokens = SplitLine(line, "([^\t ]+)");
+				goto_table.insert({ {tokens[0], tokens[1]}, tokens[2] });
+			}
 		else
 		{
 			"error: gotoReader is not open\n";
@@ -243,11 +298,14 @@ public:
 		}
 
 		//test
-		//testReader();
+		//test_grammar_table();
+		//test_action_table();
+		//test_goto_table();
 	}
 
-	vector<string> getAction(int int_state, Terminal<TOKEN>& term)
+	vector<string> getAction(string str_state, Terminal<TOKEN>& term)
 	{
+		int int_state = stoi(str_state);
 		//int int_state = stoi(currState);
 		vector<string> action;
 		if (int_state < 0 && int_state >= action_table.size()) return action; // error: out of range at action_table
@@ -258,14 +316,23 @@ public:
 		return action;
 	}
 
-	void testReader()
+	string get_str_state(ParseState str_currState, string index)
 	{
-		for (int i = 0; i < grammar_table.size(); i++) cout << setw(3) << i << ": ~" << grammar_table[i] << "~\n";
-		test_action_tables();
-		for (int i = 0; i < goto_table.size(); i++) cout << setw(3) << i << ":: ^" << goto_table[i] << "^\n";
+
 	}
 
-	void test_action_tables()
+	void test_grammar_table() 
+	{
+		for (int i = 0; i < grammar_table.size(); i++)
+		{
+			cout << setw(3) << i << ": ";
+			for (auto it : grammar_table[i])
+				cout << it << ", ";
+			cout << endl;
+		}
+	}
+
+	void test_action_table()
 	{
 		for (int i = 0; i < action_table.size(); i++)
 		{
@@ -279,10 +346,18 @@ public:
 		}
 	}
 
+	void test_goto_table()
+	{
+		for_each(goto_table.begin(), goto_table.end(), [](auto it) {
+			cout << "key: {" << setw(2) << it.first.first << ", " << setw(20) << it.first.second;
+			cout << "}, val: " << it.second << endl;
+		});
+	}
+
 	void testTerminals()
 	{
-		cout << "Terminals size: " << terminals.size() << endl;
-		for (auto it : terminals)
+		cout << "Terminals size: " << terminal_list.size() << endl;
+		for (auto it : terminal_list)
 		{
 			cout << "terminal: ";
 			cout << setw(5) << it.getSyntax() << " ";
@@ -295,7 +370,7 @@ public:
 	//testprint to tokenBuilder
 	void testTokenBuilders()
 	{
-		for_each(tokenBuilders.begin(), tokenBuilders.end(), [](auto it) {
+		for_each(regex_to_token_by_lambda.begin(), regex_to_token_by_lambda.end(), [](auto it) {
 			cout << "< regExp: " << it.first;
 			cout << ", Token: " << (it.second)("+").getSToken();
 			cout << " >\n";
@@ -304,13 +379,13 @@ public:
 
 	void testTreeBuilders()
 	{
-		cout << "treeBuilder size: " << treeBuilders.size() << endl;
-		for_each(treeBuilders.begin(), treeBuilders.end(), [](auto it) {
+		cout << "treeBuilder size: " << grammar_to_trees_by_lambda.size() << endl;
+		for_each(grammar_to_trees_by_lambda.begin(), grammar_to_trees_by_lambda.end(), [](auto it) {
 			cout << "B\n";
-			CONT<AST> astree = (it.second)();
+			CONTAINER<AST*> astree = (it.second)();
 			cout << "productionRule: " << it.first;
 			cout << ", AST: ";
-			for (auto it : astree) cout << "[" << it.toString() << "] ";
+			for (auto it : astree) cout << "[" << it->toString() << "] ";
 			cout << "\n";	
 		});
 	}

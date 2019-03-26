@@ -123,7 +123,6 @@
   <ItemGroup>
     <ClCompile Include="Assign.cpp" />
     <ClCompile Include="BinOp.cpp" />
-    <ClCompile Include="Expr.cpp" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="Lit.cpp" />
     <ClCompile Include="Main.cpp" />

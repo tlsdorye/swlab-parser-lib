@@ -2,6 +2,7 @@
 
 map<string, EToken> CheckToken =
 {
+	{"$", EToken::END_OF_TOKEN },
 	{ "_", EToken::EMPTY_EPACE },{ "(", EToken::OPEN_PAREN },
 	{ ")", EToken::CLOSE_PAREN },{ "identifier", EToken::IDENTIFIER },
 	{ "integer_number", EToken::INTEGER_NUMBER },{ "+", EToken::ADD },

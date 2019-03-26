@@ -1,10 +1,11 @@
 #include "BinOp.h"
 
-BinOp::BinOp(OpKind op, Expr left, Expr right)
+BinOp::BinOp(OpKind op, Expr* left, Expr* right)
 {
 	this->op = op;
 	this->left = left;
 	this->right = right;
+	this->type = "BinOp";
 }
 
 OpKind BinOp::getOpKind()
@@ -12,12 +13,12 @@ OpKind BinOp::getOpKind()
 	return op;
 }
 
-Expr BinOp::getRight()
+Expr* BinOp::getRight()
 {
 	return right;
 }
 
-Expr BinOp::getLeft()
+Expr* BinOp::getLeft()
 {
 	return left;
 }
@@ -47,5 +48,5 @@ string BinOp::getStrOpKind(OpKind opkind)
 
 string BinOp::toString()
 {
-	return string("BinOp(" + getStrOpKind(op) + "," + left.toString() + "," + right.toString() + ")");
+	return string("BinOp(" + getStrOpKind(op) + "," + left->toString() + "," + right->toString() + ")");
 }

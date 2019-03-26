@@ -3,7 +3,7 @@
 Var::Var(string varName)
 {
 	this->varName = varName;
-
+	this->type = "Var";
 }
 
 string Var::getVarName()

@@ -1,16 +1,19 @@
 #pragma once
 #include <string>
+using namespace std;
 
 class StackElement
 {
+private:
+	string type;
 public:
 	StackElement()
 	{
 
 	}
-	virtual void toString()
+	virtual string toString()
 	{
-
+		return type;
 	}
 };
 

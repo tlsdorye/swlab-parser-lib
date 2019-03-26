@@ -6,6 +6,7 @@ using namespace std;
 
 enum class EToken
 {
+	END_OF_TOKEN,
 	EMPTY_EPACE,
 	OPEN_PAREN,
 	CLOSE_PAREN,
