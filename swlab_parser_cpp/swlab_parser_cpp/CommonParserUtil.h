@@ -25,12 +25,14 @@ class CommonParserUtil
 	//static_assert(is_base_of<TokenInterface, TOKEN>::value, "TOKEN muse inherit from TokenInterface");
 private:
 	map<string, function<TOKEN(string)>> regex_to_token;
-	map<string, function<CONTAINER<AST*>()>> grammar_to_trees;
+	map<int, function<CONTAINER<AST*>()>> index_to_trees;
 	
 	vector<map<string, vector<string>>> action_table;
 	map<pair<string, string>, string> goto_table;
 	vector<vector<string>> grammar_table;
 	int curr_grammar_index;
+
+	vector<string> str_grammar;
 
 	queue<Terminal<TOKEN>> terminal_queue;
 
@@ -153,9 +155,11 @@ public:
 		this->start_symbol = startSymbol;
 	}
 
-	void AddTreeLambda(string grammar_rule, function<CONTAINER<AST*>()> lambda_grammar_rule)
+	void AddTreeLambda(string grammar_rule, int idx, function<CONTAINER<AST*>()> lambda_grammar_rule)
 	{
-		grammar_to_trees.insert({ grammar_rule, lambda_grammar_rule });
+		while (str_grammar.size() <= idx) str_grammar.push_back("");
+		str_grammar[idx] = grammar_rule;
+		index_to_trees.insert({ idx, lambda_grammar_rule });
 	}
 
 	CONTAINER<AST*> Parsing(const vector<string> filepaths)
@@ -163,7 +167,7 @@ public:
 		LoadAutomaton();
 		Lexing(filepaths);
 
-		//CreateAutomaton();
+		CreateAutomaton();
 
 		parse_stack = deque<StackElement*>();
 		parse_stack.push_back(new ParseState("0")); // ¹Ýµå½Ã delete
@@ -205,12 +209,13 @@ public:
 				vector<string>::iterator rhs_end = grammar_table[curr_grammar_index].end();
 				vector<string> rhs(rhs_start, rhs_end);
 
-				string grammar_rule;
+				//string grammar_rule;
 
-				for (auto it : grammar_table[curr_grammar_index]) grammar_rule += it + " ";
-				grammar_rule = grammar_rule.substr(0, grammar_rule.size() - 1);
+				//for (auto it : grammar_table[curr_grammar_index]) grammar_rule += it + " ";
+				//grammar_rule = grammar_rule.substr(0, grammar_rule.size() - 1);
 
-				CONTAINER<AST*> trees = grammar_to_trees[grammar_rule]();
+				//CONTAINER<AST*> trees = grammar_to_trees[grammar_rule]();
+				CONTAINER<AST*> trees = index_to_trees[curr_grammar_index]();
 
 				for (int i = 0; i < rhs.size() * 2; i++)
 				{
@@ -310,25 +315,15 @@ public:
 
 	void CreateAutomaton()
 	{
-		vector<string> grammar_rules;
-		for (auto it : grammar_to_trees) grammar_rules.push_back(it.first);
-
 		set<string> nonterminals;
 		vector<vector<string>> grammar_rule_split;
-		for (auto grammar : grammar_rules) grammar_rule_split.push_back(SplitLine(grammar, "([^\t ]+)"));
-		//
-		for (auto it : grammar_rule_split) {
-			for (auto its : it) {
-				cout << its << ", ";
-			}
-			cout << endl;
-		}
-		//
+		for (auto grammar : str_grammar) grammar_rule_split.push_back(SplitLine(grammar, "([^\t ]+)"));
+
 		for (auto it : grammar_rule_split) nonterminals.insert(it[0]);
 		
 		if (start_symbol == "")
 		{
-			PrintError("null error - start_symbol");
+			PrintError("null error - start_symbol ");
 			return;
 		}
 
@@ -412,8 +407,8 @@ public:
 
 	void test_grammar_to_trees()
 	{
-		cout << "treeBuilder size: " << grammar_to_trees.size() << endl;
-		for_each(grammar_to_trees.begin(), grammar_to_trees.end(), [](auto it) {
+		cout << "treeBuilder size: " << index_to_trees.size() << endl;
+		for_each(index_to_trees.begin(), index_to_trees.end(), [](auto it) {
 			cout << "B\n";
 			CONTAINER<AST*> astree = (it.second)();
 			cout << "productionRule: " << it.first;
