@@ -32,7 +32,7 @@ private:
 	vector<vector<string>> grammar_table;
 	int curr_grammar_index;
 
-	queue<Terminal<TOKEN>> terminal_queue; // -> queue로 바꿔도 좋을듯
+	queue<Terminal<TOKEN>> terminal_queue;
 
 	deque<StackElement*> parse_stack;
 	string start_symbol;	
@@ -320,6 +320,33 @@ public:
 		}
 		//
 		for (auto it : grammar_rule_split) nonterminals.insert(it[0]);
+		
+		if (start_symbol == "")
+		{
+			PrintError("null error - start_symbol");
+			return;
+		}
+
+		string fileContent = "CFG \"" + start_symbol + "\" [\n";
+
+		for (auto token : grammar_rule_split)
+		{
+			fileContent += "\tProductionRule \"" + token[0] + "\" [";
+			for (int j = 2; j < token.size(); j++)
+			{
+				set<string>::iterator iter = nonterminals.find(token[j]);
+				if (iter != nonterminals.end()) fileContent += "Nonterminal \"";
+				else fileContent += "Terminal \"";
+				fileContent += token[j] + "\"";
+				if (j < token.size() - 1) fileContent += ", ";
+			}
+			fileContent += "]";
+			if (token != grammar_rule_split[grammar_rule_split.size() - 1])
+				fileContent += ",\n";
+			else fileContent += "\n";
+		}
+		fileContent += "]";
+		cout << fileContent << endl;
 
 	}
 
