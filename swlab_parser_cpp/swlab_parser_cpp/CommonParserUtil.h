@@ -60,12 +60,11 @@ public:
 		for (auto it : filepaths)
 		{
 			ifstream reader = ifstream(it);
-			vector<string> lines;
 			if (reader.is_open())
 			{
 				string line;
-				while (getline(reader, line)) lines.push_back(line);
-				for (int i = 0; i < lines.size(); i++) Matching(lines[i], i + 1);
+				int lineno = 1;
+				while (getline(reader, line)) Matching(line, lineno++);
 			}
 			else
 			{
@@ -164,7 +163,7 @@ public:
 		LoadAutomaton();
 		Lexing(filepaths);
 
-		CreateAutomaton();
+		//CreateAutomaton();
 
 		parse_stack = deque<StackElement*>();
 		parse_stack.push_back(new ParseState("0")); // ¹Ýµå½Ã delete
@@ -179,7 +178,8 @@ public:
 			if (next_action[0] == "Accept")
 			{
 				terminal_queue.pop();
-				if (Nonterminal<AST, CONTAINER>* nt = dynamic_cast<Nonterminal<AST, CONTAINER>*>(parse_stack[1])) {
+				if (Nonterminal<AST, CONTAINER>* nt = 
+					dynamic_cast<Nonterminal<AST, CONTAINER>*>(parse_stack[1])) {
 					return nt->getTrees();
 				}
 				else {
@@ -221,7 +221,12 @@ public:
 				curr_state = dynamic_cast<ParseState*>(parse_stack.back())->get_state();
 
 				parse_stack.push_back(new Nonterminal<AST, CONTAINER>(trees));
-				parse_stack.push_back(new ParseState(goto_table[{curr_state, lhs}]));
+				auto it = goto_table.find({ curr_state, lhs });
+				if(it != goto_table.end()) parse_stack.push_back(new ParseState(it->second));
+				else
+				{
+					PrintError("");
+				}
 			}
 		}
 

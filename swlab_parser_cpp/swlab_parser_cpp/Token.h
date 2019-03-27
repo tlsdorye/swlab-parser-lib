@@ -43,7 +43,7 @@ private:
 	string str_token;
 public:
 	Token();
-	Token(string str_token, EToken enum_token);
+	Token(EToken enum_token);
 	EToken get_enum_token();
 	string get_str_token();
 };
