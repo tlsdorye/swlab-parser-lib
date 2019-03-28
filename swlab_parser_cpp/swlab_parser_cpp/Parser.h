@@ -19,7 +19,7 @@ private:
 public:
 	Parser()
 	{
-		new Lexer(parser_util);
+		new Lexer<AST, CONTAINER>(parser_util);
 
 		parser_util.SetStartSymbol("SeqExpr'");
 		parser_util.AddTreeLambda("SeqExpr' -> SeqExpr", 0, [this]()->CONTAINER<AST*> {
@@ -46,7 +46,7 @@ public:
 		parser_util.AddTreeLambda("AssignExpr -> AdditiveExpr", 4, [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(1);
 		});
-		parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr + MultiplicativeExpr", 5, [this]()->CONTAINER<Expr*> {
+		parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr + MultiplicativeExpr", 5, [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> additiveexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> multiplicativeexpr = parser_util.GetStackInTrees(3);
 			CONTAINER<AST*> ret(1, new BinOp(OpKind::ADD, *additiveexpr.begin(), *multiplicativeexpr.begin()));
@@ -61,7 +61,7 @@ public:
 		parser_util.AddTreeLambda("AdditiveExpr -> MultiplicativeExpr", 7, [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(1);
 		});
-		parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr * PrimaryExpr", 8, [this]()->CONTAINER<Expr*> {
+		parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr * PrimaryExpr", 8, [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> multicativeexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> primaryexpr = parser_util.GetStackInTrees(3);
 			CONTAINER<AST*> ret(1, new BinOp(OpKind::MUL, *multicativeexpr.begin(), *primaryexpr.begin()));
@@ -81,22 +81,22 @@ public:
 			CONTAINER<AST*> ret(1, new Var(var_name));
 			return ret;
 		});
-		parser_util.AddTreeLambda("PrimaryExpr -> integer_number", 12, [this]()->CONTAINER<Expr*> {
+		parser_util.AddTreeLambda("PrimaryExpr -> integer_number", 12, [this]()->CONTAINER<AST*> {
 			int integer_number = stoi(parser_util.GetStackInSyntax(1));
 			CONTAINER<AST*> ret(1, new Lit(integer_number));
 			return ret;
 		});
-		parser_util.AddTreeLambda("PrimaryExpr -> ( AssignExpr )", 13, [this]()->vector<AST*> {
+		parser_util.AddTreeLambda("PrimaryExpr -> ( AssignExpr )", 13, [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(2);
 		});
 	}
 
-	CONTAINER<AST*> Parsing(CONTAINER<string> filepaths)
+	CONTAINER<AST*> Parsing(vector<string> filepaths)
 	{
 		return parser_util.Parsing(filepaths);
 	}
 
-	void Lexing(CONTAINER<string> filepaths)
+	void Lexing(vector<string> filepaths)
 	{
 		parser_util.Lexing(filepaths);
 	}

@@ -69,9 +69,6 @@
     <ClCompile Include="Assign.cpp">
       <Filter>소스 파일\example\arith\ast</Filter>
     </ClCompile>
-    <ClCompile Include="Lexer.cpp">
-      <Filter>소스 파일\example\arith\parser</Filter>
-    </ClCompile>
     <ClCompile Include="Token.cpp">
       <Filter>소스 파일\example\arith\parser</Filter>
     </ClCompile>
