@@ -4,8 +4,6 @@ swlap_parser_cpp version
 ## 1. Token class 작성요령
 
 1. enum class ENUM_TOKEN 을 만듭니다.
-
-ex)
 ```
 enum class ENUM_TOKEN
 {
@@ -25,8 +23,6 @@ enum class ENUM_TOKEN
 ```
 
 2. ENUM_TOKEN 과 str_token 사이의 정보를 가지고 있어야 합니다.
-
-ex)
 ```
 map<ENUM_TOKEN, string> str_to_enum_token =
 {
@@ -40,23 +36,24 @@ map<ENUM_TOKEN, string> str_to_enum_token =
 ```
 
 3. Token class 는 반드시 아래의 멤버를 가져야 합니다.
+
+멤버 변수
 ```
-멤버 변수:
-	ENUM_TOKEN enum_token
-	string str_token
-
-생성자:
-	Token(ENUM_TOKEN enum_token)
-
-멤버 함수:
-	string get_str_token() : ENUM_TOKEN 에 대응되는 str_token을 반환
+ENUM_TOKEN enum_token
+string str_token
+```
+생성자
+```
+Token(ENUM_TOKEN enum_token)
+```
+멤버 함수
+```
+string get_str_token() : ENUM_TOKEN 에 대응되는 str_token을 반환
 ```
 
 ## 2. Lexer class 작성요령
 
 1. Lexer class는 AST node class와 그 node를 담는 CONTAINER를 템플릿 인자를 가져야 합니다.
-
-ex)
 ```
 template<typename AST,
 	template<typename ELEM, typename = allocator<ELEM>> class CONTAINER>
@@ -71,8 +68,6 @@ class Lexer
 그리고 CommonParserUtil 의 void AddTokenLambda(regex_expr, lambda_exp)를 함수를 이용하여 Token에 필요한 lambda를 만듭니다.
 
 END_OF_TOKEN은 CommonParserUtil 의 void LexEndOfTokn(ENUM_TOKEN) 함수를 이용합니다.
-
-ex)
 ```
 Lexer(CommonParserUtil<Token, AST, CONTAINER> &parser_util)
 {
@@ -85,8 +80,6 @@ Lexer(CommonParserUtil<Token, AST, CONTAINER> &parser_util)
 ## 3. Parser class 작성요령
 
 1. Parser class는 AST node class와 그 node를 담는 CONTAINER를 템플릿 인자를 가져야 합니다.
-
-ex)
 ```
 template<typename AST,
 	template<typename ELEM, typename = allocator<ELEM>> class CONTAINER>
@@ -99,60 +92,58 @@ class Parser
 2. CommonParserUtil 을 멤버변수로 갖습니다.
 
 3.Start_symbol은 CommonParserUtil 의 void SetStartSymbol(start_tymbol) 함수를 이용합니다.
-
-ex)
 ```
 parser_util.SetStartSymbol("SeqExpr`");
 ```
 
 3. Parser 생성자 내부에서 CommonParserUtil의 void AddTreeLambda(production_rule, index, lambda_expression) 함수룰 이용하여 Tree에 필요한 lambda를 만듭니다
 
-lambda 작성요령은 다음과 같습니다.
+4. lambda 작성요령은 다음과 같습니다.
 
-ex)
-```
 1) production_rule 작성
-ex) 
+
+```
 AssignExpr -> identifier = AssignExpr
+```
 
 2) 작성한 production_rule을 실행하는 람다식을 구성
 
-	Nonterminal
-		production_rule 의 오른쪽인경우
-			CommonParserUtil 의 CONTAINER<AST> GetStackInTrees(index) 를 이용하여 tree를 가져옵니다.
-			해당 Nonterminal이 production_rule의 위치를 x라고 하면 index = 2*x - 1
-			ex) 
-			첫번째 위치인 경우: index = 1
-			두번재 위치인 경우: index = 3
-		ex)
-		CONTAINER<AST> assignexpr = parser_util.GetStackInTrees(3);
+Nonterminal: production_rule 의 오른쪽인경우
+- CommonParserUtil 의 CONTAINER<AST> GetStackInTrees(index) 를 이용하여 tree를 가져옵니다.
+- 해당 Nonterminal이 production_rule의 위치를 x라고 하면 index = 2*x - 1
+	
+```	
+CONTAINER<AST> assignexpr = parser_util.GetStackInTrees(3);
+```
 
-		production_rule의 왼쪽인경우
-			오른쪽의 결과를 CONTAINER<AST> 의 형태로 만들어서 반환합니다.
-		ex) 
-		CONTAINER<AST> left_assignexpr;
-		...
-		return left_assignexpr;
+Nonterminal: production_rule의 왼쪽인경우
+- 오른쪽의 결과를 CONTAINER<AST> 의 형태로 만들어서 반환합니다.
 
-	Terminal
-		CommonParserUtil 의 CONTAINER<AST> GetStackInSyntax(index) 를 이용하여 syntax를 가져옵니다.
-		해당 Terminal이 production_rule의 위치를 x라고 하면 index = 2*x - 1
-			ex) 
-			첫번째 위치인 경우: index = 1
-		    	두번재 위치인 경우: index = 3
-		ex)
-		string identifier = parser_util.GetStackInSyntax(1);
+```
+CONTAINER<AST> left_assignexpr;
+...
+return left_assignexpr;
+```
+
+Terminal
+- CommonParserUtil 의 CONTAINER<AST> GetStackInSyntax(index) 를 이용하여 syntax를 가져옵니다.
+- 해당 Terminal이 production_rule의 위치를 x라고 하면 index = 2*x - 1
+
+```
+string identifier = parser_util.GetStackInSyntax(1);
+```
 
 3. parser_util.AddTreeLambda(production_rule, lambda)함수를 이용하여 만든 람다식을 넣습니다.
 
-최종 예시:
+최종 예시
+
+```
 parser_util.AddTreeLambda("AssignExpr -> identifier = AssignExpr", 3, []()->CONTAINER<AST*> {
 	string identifier = parser_util.GetStackInSyntax(1);
 	CONTAINER<AST*> assignexpr = parser_util.GetStackInTrees(3);
 	CONTAINER<AST*> ret(1, new Assign(identifier, *assignexpr.begin()));
 	return ret;
 });
-
 ```
 
 * CONTAINER는 vector, list 가 가능합니다. (다른 container는 확인하지 않음)
