@@ -1,6 +1,61 @@
 # swlab_parser_cpp
 swlap_parser_cpp version
 
+## 0. parser_lib 사용 요령
+
+만들어야 할 class
+- Token class : 해당 언어의 Token 명세서
+- Lexer class : 해당 언어의 regex - Token 관계를 기술
+- Parser class: 해당 언어의 grammar를 기술
+- Expr class  : 해당 언어의 Abstract Syntax Tree 의 node를 기술
+
+CommonParserUtil 함수 설명
+- void AddTokenLambda(string regex_exp, function<TOKEN(string)> lambda_token)
+```
+regex - Token 관계를 추가한다.
+ex)
+AddTokenLambda("[0-9]+", [](string text)->Token {return Token(EToken::INTEGER_NUMBER); });
+```
+
+- void LexEndOfToken(Token token)
+```
+END_OF_TOKEN을 추가한다
+ex)
+LexEndOfToken(Token(EToken::END_OF_TOKEN));
+```
+
+- CONTAINER<AST> Parsing(vector<string> filepaths)
+```
+Parsing을 시작한다
+```
+
+- void AddTreeLambda(string grammar_rule, int idx, function<CONTAINER<AST*>()> lambda_grammar_rule)
+```
+grammar_rule - tree 관계를 추가한다
+ex)
+parser_util.AddTreeLambda("SeqExpr' -> SeqExpr", 0, [this]()->CONTAINER<AST*> {
+	...
+}
+```
+
+void SetStartSymbol(string start_symbol)
+```
+start_symbol을 추가한다
+ex)
+parser_util.SetStartSymbol("SeqExpr'");
+```
+
+CONTAINER<AST*> GetStackInTrees(int idx)
+```
+CommonParserUtil 내부 stack의 idx번째 tree를 가져온다
+```
+
+string GetStackInSyntax(int idx)
+```
+CommonParserUtil 내부 stack의 idx번째 syntax를 가져온다
+```
+
+
 ## 1. Token class 작성요령
 
 enum class ENUM_TOKEN 을 만듭니다.
