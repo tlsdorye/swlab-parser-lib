@@ -1,20 +1,14 @@
 #include "Main.h"
 using namespace std;
 
-void printToken(Token tok)
-{
-	cout << "printToken: " << tok.get_str_token() << endl;
-}
-
-void printTerminal(Terminal<Token> term)
-{
-	cout << "printTerminal: [";
-	cout << term.getSyntax() << ", " << term.getToken().get_str_token() << ", ";
-	cout << term.getCharIdx() << ", " << term.getLineIdx() << " ]\n";
-}
 
 int main()
 {
+	//string program = "";
+	//string option = "/c ../genlrparser-exe.exe ../mygrammar.grm -output a.txt b.txt c.txt";
+	//C:\Users\tlsdo\Source\Repos\swlab_parser_cpp\swlab_parser_cpp\swlab_parser_cpp
+	//ShellExecute(NULL, NULL, "cmd", NULL, NULL, SW_SHOWNORMAL);
+
 	vector<string> filepaths;
 	//filepaths.push_back("oneline.txt");
 	filepaths.push_back("multiline.txt");

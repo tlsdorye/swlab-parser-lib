@@ -16,6 +16,7 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <Windows.h>
 using namespace std;
 
 template <typename TOKEN, typename AST, 
@@ -167,8 +168,6 @@ public:
 		LoadAutomaton();
 		Lexing(filepaths);
 
-		CreateAutomaton();
-
 		parse_stack = deque<StackElement*>();
 		parse_stack.push_back(new ParseState("0")); // 반드시 delete
 
@@ -209,12 +208,6 @@ public:
 				vector<string>::iterator rhs_end = grammar_table[curr_grammar_index].end();
 				vector<string> rhs(rhs_start, rhs_end);
 
-				//string grammar_rule;
-
-				//for (auto it : grammar_table[curr_grammar_index]) grammar_rule += it + " ";
-				//grammar_rule = grammar_rule.substr(0, grammar_rule.size() - 1);
-
-				//CONTAINER<AST*> trees = grammar_to_trees[grammar_rule]();
 				CONTAINER<AST*> trees = index_to_trees[curr_grammar_index]();
 
 				for (int i = 0; i < rhs.size() * 2; i++)
@@ -243,62 +236,49 @@ public:
 		ifstream action_reader("action_table.txt");
 		ifstream goto_reader("goto_table.txt");
 
+		if (!grammar_reader.good() || !action_reader.good() || !goto_reader.good()) 
+		{
+			CreateAutomaton();
+			grammar_reader.close();
+			action_reader.close();
+			goto_reader.close();
+			grammar_reader.open("grammar_rules.txt");
+			action_reader.open("action_table.txt");
+			goto_reader.open("goto_table.txt");
+		}
+
 		string line;
 		grammar_table.clear(); // capacity는 그대로
 		action_table.clear();
 		goto_table.clear();
 
-		if (grammar_reader.is_open())
+		while (getline(grammar_reader, line))
 		{
-			while (getline(grammar_reader, line))
-			{
-				vector<string> index_split = SplitLine(line, "([0-9]+)(?:. )([^\n]+)");
-				vector<string> grammar_split = SplitLine(index_split[1], "([^\t ]+)");
-				int index = stoi(index_split[0]);
-				while (grammar_table.size() <= index) grammar_table.push_back(vector<string>());
-				grammar_table[index] = grammar_split;
-			}
-		}
-		else
-		{
-			"error: grammarReader is not open\n";
-			return;
+			vector<string> index_split = SplitLine(line, "([0-9]+)(?:. )([^\n]+)");
+			vector<string> grammar_split = SplitLine(index_split[1], "([^\t ]+)");
+			int index = stoi(index_split[0]);
+			while (grammar_table.size() <= index) grammar_table.push_back(vector<string>());
+			grammar_table[index] = grammar_split;
 		}
 
-		if (action_reader.is_open())
+		while (getline(action_reader, line))
 		{
-			while (getline(action_reader, line))
-			{
-				vector<string> tokens = SplitLine(line, "([^\t ]+)");
-				int state = stoi(tokens[0]);
-				if (action_table.size() <= state) action_table.push_back(map<string, vector<string>>());
-				for (int i = 2; i < tokens.size(); i++) action_table[state][tokens[1]].push_back(tokens[i]);
-			}
-		}
-			
-		else
-		{
-			"error: actionReader is not open\n";
-			return;
+			vector<string> tokens = SplitLine(line, "([^\t ]+)");
+			int state = stoi(tokens[0]);
+			if (action_table.size() <= state) action_table.push_back(map<string, vector<string>>());
+			for (int i = 2; i < tokens.size(); i++) action_table[state][tokens[1]].push_back(tokens[i]);
 		}
 
-		if (goto_reader.is_open())
-			while (getline(goto_reader, line))
-			{
-				vector<string> tokens = SplitLine(line, "([^\t ]+)");
-				goto_table.insert({ {tokens[0], tokens[1]}, tokens[2] });
-			}
-		else
+		while (getline(goto_reader, line))
 		{
-			"error: gotoReader is not open\n";
-			return;
+			vector<string> tokens = SplitLine(line, "([^\t ]+)");
+			goto_table.insert({ { tokens[0], tokens[1] }, tokens[2] });
 		}
 	}
 
 	vector<string> FindAction(string curr_state, Terminal<TOKEN>& term)
 	{
 		int state = stoi(curr_state);
-		//int int_state = stoi(currState);
 
 		if (state < 0 && state >= action_table.size()) {
 			PrintError("out_of_range error - action_table");
@@ -327,27 +307,63 @@ public:
 			return;
 		}
 
-		string fileContent = "CFG \"" + start_symbol + "\" [\n";
+		string mygrammar_content = "CFG \"" + start_symbol + "\" [\n";
 
 		for (auto token : grammar_rule_split)
 		{
-			fileContent += "\tProductionRule \"" + token[0] + "\" [";
+			mygrammar_content += "\tProductionRule \"" + token[0] + "\" [";
 			for (int j = 2; j < token.size(); j++)
 			{
 				set<string>::iterator iter = nonterminals.find(token[j]);
-				if (iter != nonterminals.end()) fileContent += "Nonterminal \"";
-				else fileContent += "Terminal \"";
-				fileContent += token[j] + "\"";
-				if (j < token.size() - 1) fileContent += ", ";
+				if (iter != nonterminals.end()) mygrammar_content += "Nonterminal \"";
+				else mygrammar_content += "Terminal \"";
+				mygrammar_content += token[j] + "\"";
+				if (j < token.size() - 1) mygrammar_content += ", ";
 			}
-			fileContent += "]";
+			mygrammar_content += "]";
 			if (token != grammar_rule_split[grammar_rule_split.size() - 1])
-				fileContent += ",\n";
-			else fileContent += "\n";
+				mygrammar_content += ",\n";
+			else mygrammar_content += "\n";
 		}
-		fileContent += "]";
-		cout << fileContent << endl;
+		mygrammar_content += "]";
 
+		ofstream mygrammar_writer("mygrammar.grm");
+		mygrammar_writer << mygrammar_content;
+		mygrammar_writer.close();
+
+		string instr = "/c genlrparser-exe.exe mygrammar.grm -output grammar_rules.txt action_table.txt goto_table.txt > genlrparser_result.txt";
+		
+		SHELLEXECUTEINFO shell_execute_info = { 0 };
+		shell_execute_info.cbSize = sizeof(SHELLEXECUTEINFO);
+		shell_execute_info.fMask = SEE_MASK_NOCLOSEPROCESS;
+		shell_execute_info.hwnd = NULL;
+		shell_execute_info.lpVerb = NULL;
+		shell_execute_info.lpFile = "cmd";
+		shell_execute_info.lpParameters = instr.c_str();
+		shell_execute_info.lpDirectory = NULL;
+		shell_execute_info.nShow = SW_SHOWNORMAL;
+		shell_execute_info.hInstApp = NULL;
+
+		cout << "genlrparser is starting...\n";
+		ShellExecuteEx(&shell_execute_info);
+
+		cout << "waiting for genlrparser...\n";
+		WaitForSingleObject(shell_execute_info.hProcess, INFINITE);
+		CloseHandle(shell_execute_info.hProcess);
+
+		ifstream result_reader("genlrparser_result.txt");
+		if (result_reader.is_open())
+		{
+			string result;
+			result_reader >> result;
+			cout << "genlrparser: " + result + "\n";
+			if (result == "Done") LoadAutomaton();
+		}
+		else 
+		{
+			PrintError("execute error - genlrparser");
+			return;
+		}
 	}
 
 	void test_grammar_table() 
