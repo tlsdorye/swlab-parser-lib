@@ -46,6 +46,12 @@
     <Filter Include="헤더 파일\example\arith\parser">
       <UniqueIdentifier>{36fdaaf1-a729-44af-a5de-60dca9747ee8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\example\arith\compiler">
+      <UniqueIdentifier>{6251c760-56b8-481d-8d7a-fcc869ab03d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\example\arith\complier">
+      <UniqueIdentifier>{33fd8617-a3a7-4b79-8d7b-f1d6cbe1b324}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -74,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="ParseState.cpp">
       <Filter>소스 파일\parserlib</Filter>
+    </ClCompile>
+    <ClCompile Include="Compiler.cpp">
+      <Filter>소스 파일\example\arith\compiler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="ParseState.h">
       <Filter>헤더 파일\parserlib</Filter>
+    </ClInclude>
+    <ClInclude Include="Compiler.h">
+      <Filter>헤더 파일\example\arith\complier</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -125,7 +125,7 @@ public:
 		return tokens;
 	}
 
-	CONTAINER<AST*> getStackInTrees(int idx)
+	CONTAINER<AST*> GetStackInTrees(int idx)
 	{
 		int length = grammar_table[curr_grammar_index].size() - 2;
 		int last_idx = parse_stack.size() - 1;
@@ -138,7 +138,7 @@ public:
 		}
 	}
 
-	string getStackInSyntax(int idx)
+	string GetStackInSyntax(int idx)
 	{
 		int length = grammar_table[curr_grammar_index].size() - 2;
 		int last_idx = parse_stack.size() - 1;
@@ -151,7 +151,7 @@ public:
 		}
 	}
 
-	void setStartSymbol(string startSymbol)
+	void SetStartSymbol(string startSymbol)
 	{
 		this->start_symbol = startSymbol;
 	}

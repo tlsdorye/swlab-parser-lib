@@ -27,6 +27,10 @@ public:
 
 	string toString()
 	{
-		return "Nonterminal";
+		string all_tree_root_type = "[";
+		for (auto it : trees) all_tree_root_type += it->type + ", ";
+		all_tree_root_type = all_tree_root_type.substr(0, all_tree_root_type.size() - 2);
+		all_tree_root_type += "]";
+		return all_tree_root_type;
 	}
 };

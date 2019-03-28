@@ -5,80 +5,73 @@ Parser::Parser()
 {
 	new Lexer(parser_util);
 
-	parser_util.setStartSymbol("SeqExpr'");
+	parser_util.SetStartSymbol("SeqExpr'");
 	parser_util.AddTreeLambda("SeqExpr' -> SeqExpr", 0, [this]()->vector<Expr*> {
-		return parser_util.getStackInTrees(1);
+		return parser_util.GetStackInTrees(1);
 	});
 	parser_util.AddTreeLambda("SeqExpr -> SeqExpr ; AssignExpr", 1, [this]()->vector<Expr*> {
-		vector<Expr*> seqexpr = parser_util.getStackInTrees(1);
-		vector<Expr*> assignexpr = parser_util.getStackInTrees(3);
+		vector<Expr*> seqexpr = parser_util.GetStackInTrees(1);
+		vector<Expr*> assignexpr = parser_util.GetStackInTrees(3);
 		seqexpr.insert(seqexpr.end(), assignexpr.begin(), assignexpr.end());
 		return seqexpr;
 	});
 	parser_util.AddTreeLambda("SeqExpr -> AssignExpr", 2, [this]()->vector<Expr*> {
-		vector<Expr*> seqexpr;
-		vector<Expr*> assignexpr = parser_util.getStackInTrees(1);
-		seqexpr.insert(seqexpr.end(), assignexpr.begin(), assignexpr.end());
+		vector<Expr*> assignexpr = parser_util.GetStackInTrees(1);
+		vector<Expr*> seqexpr(assignexpr);
 		return seqexpr;
 	});
 	parser_util.AddTreeLambda("AssignExpr -> identifier = AssignExpr", 3, [this]()->vector<Expr*> {
-		string identifier = parser_util.getStackInSyntax(1);
-		vector<Expr*> assignexpr = parser_util.getStackInTrees(3);
-		vector<Expr*> ret;
-		ret.push_back(new Assign(identifier, assignexpr[0]));
+		string identifier = parser_util.GetStackInSyntax(1);
+		vector<Expr*> assignexpr = parser_util.GetStackInTrees(3);
+		vector<Expr*> ret(1, new Assign(identifier, *assignexpr.begin()));
 		return ret;
 	});
 
 	parser_util.AddTreeLambda("AssignExpr -> AdditiveExpr", 4, [this]()->vector<Expr*> {
-		return parser_util.getStackInTrees(1);
+		return parser_util.GetStackInTrees(1);
 	});
 	parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr + MultiplicativeExpr", 5, [this]()->vector<Expr*> {
-		vector<Expr*> additiveexpr = parser_util.getStackInTrees(1);
-		vector<Expr*> multiplicativeexpr = parser_util.getStackInTrees(3);
-		vector<Expr*> ret;
-		ret.push_back(new BinOp(OpKind::ADD, additiveexpr[0], multiplicativeexpr[0]));
+		vector<Expr*> additiveexpr = parser_util.GetStackInTrees(1);
+		vector<Expr*> multiplicativeexpr = parser_util.GetStackInTrees(3);
+		vector<Expr*> ret(1, new BinOp(OpKind::ADD, *additiveexpr.begin(), *multiplicativeexpr.begin()));
 		return ret;
 	});
 	parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr - MultiplicativeExpr", 6, [this]()->vector<Expr*> {
-		vector<Expr*> additiveexpr = parser_util.getStackInTrees(1);
-		vector<Expr*> multiplicativeexpr = parser_util.getStackInTrees(3);
-		vector<Expr*> ret;
-		ret.push_back(new BinOp(OpKind::SUB, additiveexpr[0], multiplicativeexpr[0]));
+		vector<Expr*> additiveexpr = parser_util.GetStackInTrees(1);
+		vector<Expr*> multiplicativeexpr = parser_util.GetStackInTrees(3);
+		vector<Expr*> ret(1, new BinOp(OpKind::SUB, *additiveexpr.begin(), *multiplicativeexpr.begin()));
 		return ret;
 	});
 	parser_util.AddTreeLambda("AdditiveExpr -> MultiplicativeExpr", 7, [this]()->vector<Expr*> {
-		return parser_util.getStackInTrees(1);
+		return parser_util.GetStackInTrees(1);
 	});
 	parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr * PrimaryExpr", 8, [this]()->vector<Expr*> {
-		vector<Expr*> multicativeexpr = parser_util.getStackInTrees(1);
-		vector<Expr*> primaryexpr = parser_util.getStackInTrees(3);
-		vector<Expr*> ret;
-		ret.push_back(new BinOp(OpKind::MUL, multicativeexpr[0], primaryexpr[0]));
+		vector<Expr*> multicativeexpr = parser_util.GetStackInTrees(1);
+		vector<Expr*> primaryexpr = parser_util.GetStackInTrees(3);
+		vector<Expr*> ret(1, new BinOp(OpKind::MUL, *multicativeexpr.begin(), *primaryexpr.begin()));
 		return ret;
 	});
 	parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr / PrimaryExpr", 9, [this]()->vector<Expr*> {
-		vector<Expr*> multicativeexpr = parser_util.getStackInTrees(1);
-		vector<Expr*> primaryexpr = parser_util.getStackInTrees(3);
-		vector<Expr*> ret;
-		ret.push_back(new BinOp(OpKind::DIV, multicativeexpr[0], primaryexpr[0]));
+		vector<Expr*> multicativeexpr = parser_util.GetStackInTrees(1);
+		vector<Expr*> primaryexpr = parser_util.GetStackInTrees(3);
+		vector<Expr*> ret(1, new BinOp(OpKind::DIV, *multicativeexpr.begin(), *primaryexpr.begin()));
 		return ret;
 	});
 	parser_util.AddTreeLambda("MultiplicativeExpr -> PrimaryExpr", 10, [this]()->vector<Expr*> {
-		return parser_util.getStackInTrees(1);
+		return parser_util.GetStackInTrees(1);
 	});
 	parser_util.AddTreeLambda("PrimaryExpr -> identifier", 11, [this]()->vector<Expr*> {
-		vector<Expr*> ret;
-		ret.push_back(new Var(parser_util.getStackInSyntax(1)));
+		string var_name = parser_util.GetStackInSyntax(1);
+		vector<Expr*> ret(1, new Var(var_name));
 		return ret;
 	});
 	parser_util.AddTreeLambda("PrimaryExpr -> integer_number", 12, [this]()->vector<Expr*> {
-		int integer_number = stoi(parser_util.getStackInSyntax(1));
-		vector<Expr*> ret;
-		ret.push_back(new Lit(integer_number));
+		int integer_number = stoi(parser_util.GetStackInSyntax(1));
+		vector<Expr*> ret(1, new Lit(integer_number));
 		return ret;
 	});
 	parser_util.AddTreeLambda("PrimaryExpr -> ( AssignExpr )", 13, [this]()->vector<Expr*> {
-		return parser_util.getStackInTrees(2);
+		return parser_util.GetStackInTrees(2);
 	});
 }
 
