@@ -1,9 +1,10 @@
 # swlab_parser_cpp
 swlap_parser_cpp version
 
-## 1. Token class ÀÛ¼º¿ä·É
+## 1. Token class ì‘ì„±ìš”ë ¹
 
-1. enum class ENUM_TOKEN À» ¸¸µì´Ï´Ù.
+1. enum class ENUM_TOKEN ì„ ë§Œë“­ë‹ˆë‹¤.
+
 ex)
 ```
 enum class ENUM_TOKEN
@@ -23,7 +24,8 @@ enum class ENUM_TOKEN
 };
 ```
 
-2. ENUM_TOKEN °ú str_token »çÀÌÀÇ Á¤º¸¸¦ °¡Áö°í ÀÖ¾î¾ß ÇÕ´Ï´Ù.
+2. ENUM_TOKEN ê³¼ str_token ì‚¬ì´ì˜ ì •ë³´ë¥¼ ê°€ì§€ê³  ìˆì–´ì•¼ í•©ë‹ˆë‹¤.
+
 ex)
 ```
 map<ENUM_TOKEN, string> str_to_enum_token =
@@ -37,22 +39,23 @@ map<ENUM_TOKEN, string> str_to_enum_token =
 };
 ```
 
-3. Token class ´Â ¹İµå½Ã ¾Æ·¡ÀÇ ¸â¹ö¸¦ °¡Á®¾ß ÇÕ´Ï´Ù.
+3. Token class ëŠ” ë°˜ë“œì‹œ ì•„ë˜ì˜ ë©¤ë²„ë¥¼ ê°€ì ¸ì•¼ í•©ë‹ˆë‹¤.
 ```
-¸â¹ö º¯¼ö:
+ë©¤ë²„ ë³€ìˆ˜:
 	ENUM_TOKEN enum_token
 	string str_token
 
-»ı¼ºÀÚ:
+ìƒì„±ì:
 	Token(ENUM_TOKEN enum_token)
 
-¸â¹ö ÇÔ¼ö:
-	string get_str_token() : ENUM_TOKEN ¿¡ ´ëÀÀµÇ´Â str_tokenÀ» ¹İÈ¯
+ë©¤ë²„ í•¨ìˆ˜:
+	string get_str_token() : ENUM_TOKEN ì— ëŒ€ì‘ë˜ëŠ” str_tokenì„ ë°˜í™˜
 ```
 
-## 2. Lexer class ÀÛ¼º¿ä·É
+## 2. Lexer class ì‘ì„±ìš”ë ¹
 
-1. Lexer class´Â AST node class¿Í ±× node¸¦ ´ã´Â CONTAINER¸¦ ÅÛÇÃ¸´ ÀÎÀÚ¸¦ °¡Á®¾ß ÇÕ´Ï´Ù.
+1. Lexer classëŠ” AST node classì™€ ê·¸ nodeë¥¼ ë‹´ëŠ” CONTAINERë¥¼ í…œí”Œë¦¿ ì¸ìë¥¼ ê°€ì ¸ì•¼ í•©ë‹ˆë‹¤.
+
 ex)
 ```
 template<typename AST,
@@ -63,9 +66,12 @@ class Lexer
 };
 ```
 
-2. Lexer classÀÇ »ı¼ºÀÚ´Â CommonParserUtil À» parameter·Î ¹Ş½À´Ï´Ù. 
-±×¸®°í CommonParserUtil ÀÇ void AddTokenLambda(regex_expr, lambda_expression)¸¦ ÇÔ¼ö¸¦ ÀÌ¿ëÇÏ¿© Token¿¡ ÇÊ¿äÇÑ lambda¸¦ ¸¸µì´Ï´Ù.
-END_OF_TOKENÀº CommonParserUtil ÀÇ void LexEndOfTokn(ENUM_TOKEN) ÇÔ¼ö¸¦ ÀÌ¿ëÇÕ´Ï´Ù.
+2. Lexer classì˜ ìƒì„±ìëŠ” CommonParserUtil ì„ parameterë¡œ ë°›ìŠµë‹ˆë‹¤. 
+
+ê·¸ë¦¬ê³  CommonParserUtil ì˜ void AddTokenLambda(regex_expr, lambda_exp)ë¥¼ í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬ Tokenì— í•„ìš”í•œ lambdaë¥¼ ë§Œë“­ë‹ˆë‹¤.
+
+END_OF_TOKENì€ CommonParserUtil ì˜ void LexEndOfTokn(ENUM_TOKEN) í•¨ìˆ˜ë¥¼ ì´ìš©í•©ë‹ˆë‹¤.
+
 ex)
 ```
 Lexer(CommonParserUtil<Token, AST, CONTAINER> &parser_util)
@@ -76,9 +82,10 @@ Lexer(CommonParserUtil<Token, AST, CONTAINER> &parser_util)
 }
 ```
 
-## 3. Parser class ÀÛ¼º¿ä·É
+## 3. Parser class ì‘ì„±ìš”ë ¹
 
-1. Parser class´Â AST node class¿Í ±× node¸¦ ´ã´Â CONTAINER¸¦ ÅÛÇÃ¸´ ÀÎÀÚ¸¦ °¡Á®¾ß ÇÕ´Ï´Ù.
+1. Parser classëŠ” AST node classì™€ ê·¸ nodeë¥¼ ë‹´ëŠ” CONTAINERë¥¼ í…œí”Œë¦¿ ì¸ìë¥¼ ê°€ì ¸ì•¼ í•©ë‹ˆë‹¤.
+
 ex)
 ```
 template<typename AST,
@@ -89,31 +96,33 @@ class Parser
 }
 ```
 
-2. CommonParserUtil À» ¸â¹öº¯¼ö·Î °®½À´Ï´Ù.
+2. CommonParserUtil ì„ ë©¤ë²„ë³€ìˆ˜ë¡œ ê°–ìŠµë‹ˆë‹¤.
 
-3. Parser »ı¼ºÀÚ ³»ºÎ¿¡¼­ CommonParserUtilÀÇ void AddTreeLambda(production_rule, lambda_expression) ÇÔ¼ö·ê ÀÌ¿ëÇÏ¿© Tree¿¡ ÇÊ¿äÇÑ lambda¸¦ ¸¸µì´Ï´Ù
-lambda ÀÛ¼º¿ä·ÉÀº ´ÙÀ½°ú °°½À´Ï´Ù.
+3. Parser ìƒì„±ì ë‚´ë¶€ì—ì„œ CommonParserUtilì˜ void AddTreeLambda(production_rule, lambda_expression) í•¨ìˆ˜ë£° ì´ìš©í•˜ì—¬ Treeì— í•„ìš”í•œ lambdaë¥¼ ë§Œë“­ë‹ˆë‹¤
+
+lambda ì‘ì„±ìš”ë ¹ì€ ë‹¤ìŒê³¼ ê°™ìŠµë‹ˆë‹¤.
+
 ex)
 ```
 production_rule
-	Nonterminal -> Terminal + Nonterminal ÀÇ Çü½ÄÀ¸·Î ±¸¼ºÇÕ´Ï´Ù.
+	Nonterminal -> Terminal + Nonterminal ì˜ í˜•ì‹ìœ¼ë¡œ êµ¬ì„±í•©ë‹ˆë‹¤.
 
 
 Nonterminal
-	production_rule ÀÇ ¿À¸¥ÂÊÀÎ°æ¿ì
-		CommonParserUtil ÀÇ CONTAINER<AST> GetStackInTrees(index) ¸¦ ÀÌ¿ëÇÏ¿© tree¸¦ °¡Á®¿É´Ï´Ù.
-		ÇØ´ç NonterminalÀÌ production_ruleÀÇ À§Ä¡¸¦ x¶ó°í ÇÏ¸é index = 1 + (2*(x-1))
-			ex) Ã¹¹øÂ° À§Ä¡ÀÎ °æ¿ì: index = 1
-				µÎ¹øÀç À§Ä¡ÀÎ °æ¿ì: index = 3
+	production_rule ì˜ ì˜¤ë¥¸ìª½ì¸ê²½ìš°
+		CommonParserUtil ì˜ CONTAINER<AST> GetStackInTrees(index) ë¥¼ ì´ìš©í•˜ì—¬ treeë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+		í•´ë‹¹ Nonterminalì´ production_ruleì˜ ìœ„ì¹˜ë¥¼ xë¼ê³  í•˜ë©´ index = 1 + (2*(x-1))
+			ex) ì²«ë²ˆì§¸ ìœ„ì¹˜ì¸ ê²½ìš°: index = 1
+				ë‘ë²ˆì¬ ìœ„ì¹˜ì¸ ê²½ìš°: index = 3
 
-	production_ruleÀÇ ¿ŞÂÊÀÎ°æ¿ì
-		¿À¸¥ÂÊÀÇ °á°ú¸¦ CONTAINER<AST> ÀÇ ÇüÅÂ·Î ¸¸µé¾î¼­ ¹İÈ¯ÇÕ´Ï´Ù.
+	production_ruleì˜ ì™¼ìª½ì¸ê²½ìš°
+		ì˜¤ë¥¸ìª½ì˜ ê²°ê³¼ë¥¼ CONTAINER<AST> ì˜ í˜•íƒœë¡œ ë§Œë“¤ì–´ì„œ ë°˜í™˜í•©ë‹ˆë‹¤.
 
 Terminal
-	CommonParserUtil ÀÇ CONTAINER<AST> GetStackInSyntax(index) ¸¦ ÀÌ¿ëÇÏ¿© syntax¸¦ °¡Á®¿É´Ï´Ù.
-	ÇØ´ç TerminalÀÌ production_ruleÀÇ À§Ä¡¸¦ x¶ó°í ÇÏ¸é index = 1 + (2*(x-1))
-		ex) Ã¹¹øÂ° À§Ä¡ÀÎ °æ¿ì: index = 1
-			µÎ¹øÀç À§Ä¡ÀÎ °æ¿ì: index = 3
+	CommonParserUtil ì˜ CONTAINER<AST> GetStackInSyntax(index) ë¥¼ ì´ìš©í•˜ì—¬ syntaxë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+	í•´ë‹¹ Terminalì´ production_ruleì˜ ìœ„ì¹˜ë¥¼ xë¼ê³  í•˜ë©´ index = 1 + (2*(x-1))
+		ex) ì²«ë²ˆì§¸ ìœ„ì¹˜ì¸ ê²½ìš°: index = 1
+			ë‘ë²ˆì¬ ìœ„ì¹˜ì¸ ê²½ìš°: index = 3
 ```
 
-* CONTAINER´Â vector, list °¡ °¡´ÉÇÕ´Ï´Ù. (´Ù¸¥ container´Â È®ÀÎÇÏÁö ¾ÊÀ½)
+* CONTAINERëŠ” vector, list ê°€ ê°€ëŠ¥í•©ë‹ˆë‹¤. (ë‹¤ë¥¸ containerëŠ” í™•ì¸í•˜ì§€ ì•ŠìŒ)
