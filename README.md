@@ -3,7 +3,7 @@ swlap_parser_cpp version
 
 ## 1. Token class 작성요령
 
-1. enum class ENUM_TOKEN 을 만듭니다.
+enum class ENUM_TOKEN 을 만듭니다.
 ```
 enum class ENUM_TOKEN
 {
@@ -22,7 +22,7 @@ enum class ENUM_TOKEN
 };
 ```
 
-2. ENUM_TOKEN 과 str_token 사이의 정보를 가지고 있어야 합니다.
+ENUM_TOKEN 과 str_token 사이의 정보를 가지고 있어야 합니다.
 ```
 map<ENUM_TOKEN, string> str_to_enum_token =
 {
@@ -35,25 +35,26 @@ map<ENUM_TOKEN, string> str_to_enum_token =
 };
 ```
 
-3. Token class 는 반드시 아래의 멤버를 가져야 합니다.
+Token class 는 반드시 아래의 멤버를 가져야 합니다.
 
-멤버 변수
+- 멤버 변수
 ```
 ENUM_TOKEN enum_token
 string str_token
 ```
-생성자
+- 생성자
 ```
 Token(ENUM_TOKEN enum_token)
 ```
-멤버 함수
+- 멤버 함수
 ```
 string get_str_token() : ENUM_TOKEN 에 대응되는 str_token을 반환
 ```
 
 ## 2. Lexer class 작성요령
 
-1. Lexer class는 AST node class와 그 node를 담는 CONTAINER를 템플릿 인자를 가져야 합니다.
+Lexer class는 AST node class와 그 node를 담는 CONTAINER를 템플릿 인자를 가져야 합니다.
+- CONTAINER는 vector, list 가 가능합니다. (다른 container는 확인하지 않음)
 ```
 template<typename AST,
 	template<typename ELEM, typename = allocator<ELEM>> class CONTAINER>
@@ -63,7 +64,7 @@ class Lexer
 };
 ```
 
-2. Lexer class의 생성자는 CommonParserUtil 을 parameter로 받습니다. 
+Lexer class의 생성자는 CommonParserUtil 을 parameter로 받습니다. 
 
 그리고 CommonParserUtil 의 void AddTokenLambda(regex_expr, lambda_exp)를 함수를 이용하여 Token에 필요한 lambda를 만듭니다.
 
@@ -79,7 +80,8 @@ Lexer(CommonParserUtil<Token, AST, CONTAINER> &parser_util)
 
 ## 3. Parser class 작성요령
 
-1. Parser class는 AST node class와 그 node를 담는 CONTAINER를 템플릿 인자를 가져야 합니다.
+Parser class는 AST node class와 그 node를 담는 CONTAINER를 템플릿 인자를 가져야 합니다.
+- CONTAINER는 vector, list 가 가능합니다. (다른 container는 확인하지 않음)
 ```
 template<typename AST,
 	template<typename ELEM, typename = allocator<ELEM>> class CONTAINER>
@@ -89,16 +91,16 @@ class Parser
 }
 ```
 
-2. CommonParserUtil 을 멤버변수로 갖습니다.
+CommonParserUtil 을 멤버변수로 갖습니다.
 
-3.Start_symbol은 CommonParserUtil 의 void SetStartSymbol(start_tymbol) 함수를 이용합니다.
+Start_symbol은 CommonParserUtil 의 void SetStartSymbol(start_tymbol) 함수를 이용합니다.
 ```
 parser_util.SetStartSymbol("SeqExpr`");
 ```
 
-3. Parser 생성자 내부에서 CommonParserUtil의 void AddTreeLambda(production_rule, index, lambda_expression) 함수룰 이용하여 Tree에 필요한 lambda를 만듭니다
+Parser 생성자 내부에서 CommonParserUtil의 void AddTreeLambda(production_rule, index, lambda_expression) 함수룰 이용하여 Tree에 필요한 lambda를 만듭니다
 
-4. lambda 작성요령은 다음과 같습니다.
+lambda 작성요령은 다음과 같습니다.
 
 1) production_rule 작성
 
@@ -133,7 +135,7 @@ Terminal
 string identifier = parser_util.GetStackInSyntax(1);
 ```
 
-3. parser_util.AddTreeLambda(production_rule, lambda)함수를 이용하여 만든 람다식을 넣습니다.
+3) parser_util.AddTreeLambda(production_rule, lambda)함수를 이용하여 만든 람다식을 넣습니다.
 
 최종 예시
 
@@ -146,4 +148,4 @@ parser_util.AddTreeLambda("AssignExpr -> identifier = AssignExpr", 3, []()->CONT
 });
 ```
 
-* CONTAINER는 vector, list 가 가능합니다. (다른 container는 확인하지 않음)
+
