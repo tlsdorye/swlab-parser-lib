@@ -97,7 +97,8 @@ class Parser
 
 
 Parser class의 생성자에서 Token을 생성하는 lambda식을 만듭니다.
-- CommonParserUtil의 void AddTreeLambda(grammar, lambda_exp) 함수 사용
+- CommonParserUtil의 void AddTreeLambda(grammar, grammar_index, lambda_exp) 함수 사용
+- grammar_index: 해당 grammar의 index
 - start_symbol은 CommonParserUtil 의 void SetStartSymbol(start_tymbol) 함수 사용
 
 tree lambda 작성요령
@@ -114,14 +115,18 @@ AssignExpr -> identifier = AssignExpr
 
 최종 예시
 ```
-parser_util.SetStartSymbol("SeqExpr`");
-
-parser_util.AddTreeLambda("AssignExpr -> identifier = AssignExpr", 3, []()->CONTAINER<AST*> {
-	string identifier = parser_util.GetStackInSyntax(1);
-	CONTAINER<AST*> assignexpr = parser_util.GetStackInTrees(3);
-	CONTAINER<AST*> ret(1, new Assign(identifier, *assignexpr.begin()));
-	return ret;
-});
+parser()
+{
+	parser_util.SetStartSymbol("SeqExpr`");
+	...
+	parser_util.AddTreeLambda("AssignExpr -> identifier = AssignExpr", 3, []()->CONTAINER<AST*> {
+		string identifier = parser_util.GetStackInSyntax(1);
+		CONTAINER<AST*> assignexpr = parser_util.GetStackInTrees(3);
+		CONTAINER<AST*> ret(1, new Assign(identifier, *assignexpr.begin()));
+		return ret;
+	});
+	...
+}
 ```
 
 
