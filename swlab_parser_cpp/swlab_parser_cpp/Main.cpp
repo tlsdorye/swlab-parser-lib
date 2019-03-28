@@ -8,7 +8,7 @@ int main()
 	//filepaths.push_back("oneline.txt");
 	filepaths.push_back("multiline.txt");
 
-	Parser P;
+	Parser<Expr, vector> P;
 	vector<Expr*> exprSeq = P.Parsing(filepaths);
 	for (auto it : exprSeq) cout << "parsing result: " << it->toString() << endl;
 }

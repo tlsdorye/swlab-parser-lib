@@ -75,9 +75,6 @@
     <ClCompile Include="Token.cpp">
       <Filter>소스 파일\example\arith\parser</Filter>
     </ClCompile>
-    <ClCompile Include="Parser.cpp">
-      <Filter>소스 파일\example\arith\parser</Filter>
-    </ClCompile>
     <ClCompile Include="ParseState.cpp">
       <Filter>소스 파일\parserlib</Filter>
     </ClCompile>
