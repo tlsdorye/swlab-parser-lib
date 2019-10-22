@@ -1,4 +1,4 @@
-# swlab_parser_cpp
+# swlab_parser_lib
 swlap_parser_cpp version
 
 ## 0. parser_lib 사용 요령
