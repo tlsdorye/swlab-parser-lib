@@ -22,71 +22,71 @@ public:
 		new Lexer<AST, CONTAINER>(parser_util);
 
 		parser_util.SetStartSymbol("SeqExpr'");
-		parser_util.AddTreeLambda("SeqExpr' -> SeqExpr", 0, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("SeqExpr' -> SeqExpr", [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(1);
 		});
-		parser_util.AddTreeLambda("SeqExpr -> SeqExpr ; AssignExpr", 1, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("SeqExpr -> SeqExpr ; AssignExpr", [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> seqexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> assignexpr = parser_util.GetStackInTrees(3);
 			seqexpr.insert(seqexpr.end(), assignexpr.begin(), assignexpr.end());
 			return seqexpr;
 		});
-		parser_util.AddTreeLambda("SeqExpr -> AssignExpr", 2, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("SeqExpr -> AssignExpr", [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> assignexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> seqexpr(assignexpr);
 			return seqexpr;
 		});
-		parser_util.AddTreeLambda("AssignExpr -> identifier = AssignExpr", 3, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("AssignExpr -> identifier = AssignExpr", [this]()->CONTAINER<AST*> {
 			string identifier = parser_util.GetStackInSyntax(1);
 			CONTAINER<AST*> assignexpr = parser_util.GetStackInTrees(3);
 			CONTAINER<AST*> ret(1, new Assign(identifier, *assignexpr.begin()));
 			return ret;
 		});
 
-		parser_util.AddTreeLambda("AssignExpr -> AdditiveExpr", 4, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("AssignExpr -> AdditiveExpr", [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(1);
 		});
-		parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr + MultiplicativeExpr", 5, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr + MultiplicativeExpr", [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> additiveexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> multiplicativeexpr = parser_util.GetStackInTrees(3);
 			CONTAINER<AST*> ret(1, new BinOp(OpKind::ADD, *additiveexpr.begin(), *multiplicativeexpr.begin()));
 			return ret;
 		});
-		parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr - MultiplicativeExpr", 6, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("AdditiveExpr -> AdditiveExpr - MultiplicativeExpr", [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> additiveexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> multiplicativeexpr = parser_util.GetStackInTrees(3);
 			CONTAINER<AST*> ret(1, new BinOp(OpKind::SUB, *additiveexpr.begin(), *multiplicativeexpr.begin()));
 			return ret;
 		});
-		parser_util.AddTreeLambda("AdditiveExpr -> MultiplicativeExpr", 7, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("AdditiveExpr -> MultiplicativeExpr", [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(1);
 		});
-		parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr * PrimaryExpr", 8, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr * PrimaryExpr", [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> multicativeexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> primaryexpr = parser_util.GetStackInTrees(3);
 			CONTAINER<AST*> ret(1, new BinOp(OpKind::MUL, *multicativeexpr.begin(), *primaryexpr.begin()));
 			return ret;
 		});
-		parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr / PrimaryExpr", 9, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("MultiplicativeExpr -> MultiplicativeExpr / PrimaryExpr", [this]()->CONTAINER<AST*> {
 			CONTAINER<AST*> multicativeexpr = parser_util.GetStackInTrees(1);
 			CONTAINER<AST*> primaryexpr = parser_util.GetStackInTrees(3);
 			CONTAINER<AST*> ret(1, new BinOp(OpKind::DIV, *multicativeexpr.begin(), *primaryexpr.begin()));
 			return ret;
 		});
-		parser_util.AddTreeLambda("MultiplicativeExpr -> PrimaryExpr", 10, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("MultiplicativeExpr -> PrimaryExpr", [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(1);
 		});
-		parser_util.AddTreeLambda("PrimaryExpr -> identifier", 11, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("PrimaryExpr -> identifier", [this]()->CONTAINER<AST*> {
 			string var_name = parser_util.GetStackInSyntax(1);
 			CONTAINER<AST*> ret(1, new Var(var_name));
 			return ret;
 		});
-		parser_util.AddTreeLambda("PrimaryExpr -> integer_number", 12, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("PrimaryExpr -> integer_number", [this]()->CONTAINER<AST*> {
 			int integer_number = stoi(parser_util.GetStackInSyntax(1));
 			CONTAINER<AST*> ret(1, new Lit(integer_number));
 			return ret;
 		});
-		parser_util.AddTreeLambda("PrimaryExpr -> ( AssignExpr )", 13, [this]()->CONTAINER<AST*> {
+		parser_util.AddTreeLambda("PrimaryExpr -> ( AssignExpr )", [this]()->CONTAINER<AST*> {
 			return parser_util.GetStackInTrees(2);
 		});
 	}

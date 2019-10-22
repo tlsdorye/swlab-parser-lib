@@ -136,6 +136,10 @@ public:
 		else {
 			PrintError("downcasting error - Nonterminal");
 		}
+		/*
+		Nonterminal<AST, CONTAINER>* nt = (Nonterminal<AST, CONTAINER>*)parse_stack[last_idx - offset];
+		return nt->getTrees();	
+		*/
 	}
 
 	string GetStackInSyntax(int idx)
@@ -156,11 +160,13 @@ public:
 		this->start_symbol = startSymbol;
 	}
 
-	void AddTreeLambda(string grammar_rule, int idx, function<CONTAINER<AST*>()> lambda_grammar_rule)
+	void AddTreeLambda(string grammar_rule, function<CONTAINER<AST*>()> lambda_grammar_rule)
 	{
-		while (str_grammar.size() <= idx) str_grammar.push_back("");
-		str_grammar[idx] = grammar_rule;
-		index_to_trees.insert({ idx, lambda_grammar_rule });
+		str_grammar.push_back(grammar_rule);
+		index_to_trees.insert({ str_grammar.size() - 1, lambda_grammar_rule });
+		//while (str_grammar.size() <= idx) str_grammar.push_back("");
+		//str_grammar[idx] = grammar_rule;
+		//index_to_trees.insert({ idx, lambda_grammar_rule });
 	}
 
 	CONTAINER<AST*> Parsing(const vector<string> filepaths)
