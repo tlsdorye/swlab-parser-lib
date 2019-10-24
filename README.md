@@ -29,11 +29,11 @@ LexEndOfToken(Token(EToken::END_OF_TOKEN));
 Parsing을 시작한다
 ```
 
-- void AddTreeLambda(string grammar_rule, int idx, function<CONTAINER<AST*>()> lambda_grammar_rule)
+- void AddTreeLambda(string grammar_rule, function<CONTAINER<AST*>()> lambda_grammar_rule)
 ```
 grammar_rule - tree 관계를 추가한다
 ex)
-parser_util.AddTreeLambda("SeqExpr' -> SeqExpr", 0, [this]()->CONTAINER<AST*> {
+parser_util.AddTreeLambda("SeqExpr' -> SeqExpr", [this]()->CONTAINER<AST*> {
 	...
 }
 ```
